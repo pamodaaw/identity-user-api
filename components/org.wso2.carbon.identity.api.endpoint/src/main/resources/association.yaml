@@ -1,621 +1,401 @@
 swagger: '2.0'
+######################################################
+# Prolog
+######################################################
 info:
-  description: This is the RESTful API for managing Challenge Questions in WSO2 Identity Server
   version: "1.0.0"
-  title: WSO2 Identity Server - Challenge Question API
+  title: "WSO2 Identity Server Rest API - User Associations"
+  description: |
+    This document specifies a **RESTful API** for WSO2 **Identity Server** .
+    It is written with [swagger 2](http://swagger.io/).
   contact:
-    name: "WSO2 Identity Server"
-    url: "https://wso2.com/identity-and-access-management/"
+    name: "WSO2"
+    url: "http://wso2.com/products/identity-server/"
     email: "architecture@wso2.com"
   license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 
+######################################################
+# The fixed parts of the URLs of the API
+######################################################
+
+# The schemes supported by the API
 schemes:
- - https
-# host: is.wso2.com
-# basePath: /t/{tenant-domain}/api/identity/1.0.0/
+  - https
 
-# tags are used for organizing operations
-tags:
-- name: management
-  description: Secured Admin-only calls
-- name: developers
-  description: Operations available to regular developers
-security:
-  - OAuth2: []
-  - BasicAuth: []
+# The domain of the API.
+# This is configured by the customer during deployment.
+# The given host is just an example.
+# host: apis.is.com
 
+# The base path of the API.
+# Will be prefixed to all paths.
+
+# if the tenant domain is carbon.super basepath can be /api/identity/user/v1.0 like this too.
+# basePath: /t/{tenant-domain}/api/identity/v1.0
+
+# The following media types can be passed as input in message bodies of the API.
+# The actual media type must be specified in the Content-Type header field of the request.
+# The default is json, i.e. the Content-Type header is not needed to
+# be set, but supporting it serves extensibility.
+consumes:
+  - application/json
+
+# The following media types may be passed as output in message bodies of the API.
+# The media type(s) consumable by the requestor is specified in the Accept header field
+# of the corresponding request.
+# The actual media type returned will be specfied in the Content-Type header field
+# of the of the response.
+# The default of the Accept header is json, i.e. there is not needed to
+# set the value, but supporting it serves extensibility.
+produces:
+  - application/json
 paths:
-  /challenges:
+  # Endpoint uses to assiate two user accounts.
+  /users/me/associations:
     post:
-      tags:
-        - management
-      summary: "adds a new challenge question"
-      operationId: addChallengeQuestionSet
       description: |
-        Adds a new challenge question to the system
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      parameters:
-      - in: body
-        name: challengeSet
-        description: challenge-question to add
-        schema:
-          type: array
-          items:
-            $ref: '#/definitions/ChallengeSet'
+         This API is used associate a user to the authenticated user.
+      x-wso2-request: |
       x-wso2-curl: |
+      x-wso2-response: |
+        "HTTP/1.1 201 Created"
+      summary: |
+        Associate user to the authenticated user
+      parameters:
+        -
+          name: association
+          in: body
+          description:  User will be associated to the authenticated user.
+          required: true
+          schema:
+            $ref: '#/definitions/AssociationUserRequest'
       responses:
         201:
-          description: item created
+          description: Successfully created
         400:
-          description: invalid input, object invalid
+          description: Bad Request
+          schema:
+             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
         409:
-          description: an existing item already exists
-    get:
+          description: Conflict
+          schema:
+             $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+             $ref: '#/definitions/Error'
       tags:
-        - management
-      summary: searches challenge-question
-      operationId: searchChallengeQuestion
-      description: |
-        By passing in the appropriate options, you can search for
-        available challenge-question in the system
-      parameters:
-        - $ref: '#/parameters/localeQueryParam'
-        - in: query
-          name: offset
-          description: number of records to skip for pagination
-          type: integer
-          format: int32
-          minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          type: integer
-          format: int32
-          minimum: 0
-          maximum: 50
+        - Associations
+    get:
+      x-wso2-request: |
       x-wso2-curl: |
+      x-wso2-response: |
+      tags:
+      - Associations
+      summary: Get authenticated user's associations
+      description: This API is used to retrieve the associations of the authenticated user.
       responses:
         200:
-          description: search results matching criteria
+          description: Successful operation
           schema:
-            type: array
+            type: 'array'
             items:
-              $ref: '#/definitions/ChallengeSet'
-        400:
-          description: bad input parameter
-  /challenges/{challenge-set-id}:
-    get:
-      tags:
-        - management
-      summary: searches challenge-question
-      operationId: getChallengeQuestionOfASet
-      description: |
-        By passing in the appropriate options, you can search for
-        available challenge-question in the system
-      parameters:
-        - $ref: '#/parameters/questionSetIdPathParam'
-        - $ref: '#/parameters/localeQueryParam'
-        - in: query
-          name: offset
-          description: number of records to skip for pagination
-          type: integer
-          format: int32
-          minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          type: integer
-          format: int32
-          minimum: 0
-          maximum: 50
-      x-wso2-curl: |
+              $ref: '#/definitions/User'
+        204:
+          description: No content
+        401:
+          description: Unauthorized
+        500:
+          description: Server Error
+          schema:
+             $ref: '#/definitions/Error'
+
+    delete:
+      summary: Delete all my user associations
+      description: This API is used to delete all associations of the auhtentiated user.
       responses:
         200:
-          description: search results matching criteria
+          description: OK
+        401:
+          description: Unauthorized
+        500:
+          description: Server Error
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/ChallengeSet'
-        400:
-          description: bad input parameter
+             $ref: '#/definitions/Error'
+      tags:
+      - Associations
+  /users/me/associations/{associate-user-id}:
+    delete:
+      parameters:
+        -
+          name : associate-user-id
+          in : path
+          required: true
+          type: string
+      summary: Delete a selected user association
+      description: This API is used to delete the selected association of the auhtentiated user.
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not Found
+        500:
+          description: Server Error
+          schema:
+             $ref: '#/definitions/Error'
+      tags:
+      - Associations
+  /users/me/associations/switch:
     put:
-      tags:
-        - management
-      summary: "update challenge question"
-      operationId: updateChallengeQuestionSet
-      description: |
-        Updates an existing challenge question set in the system
-      consumes:
-      - application/json
-      produces:
-      - application/json
       parameters:
-        - $ref: '#/parameters/questionSetIdPathParam'
-        - in: body
-          name: challengeSet
-          description: challenge-question for the set
+        -
+          name : SwitchUserReqeust
+          in : body
+          required: true
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/ChallengeQuestion'
+            $ref: '#/definitions/AssociationSwitchRequest'
+
+      summary: Switch user account
+      description: This API is used to switch the user account.
       responses:
         200:
-          description: item updated
+          description: OK
         400:
-          description: invalid input, object invalid
-        404:
-          description: an existing item does not exists
-      x-wso2-curl: |
-    patch:
-      tags:
-        - management
-      summary: "update challenge question"
-      operationId: addChallengeQuestion
-      description: |
-        Add new challenge question for an existing set
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      parameters:
-        - $ref: '#/parameters/questionSetIdPathParam'
-        - in: body
-          name: challenge-question
-          description: challenge-question to update
+          description: Bad Request
           schema:
-            $ref: '#/definitions/ChallengeQuestionPatch'
-      responses:
-        200:
-          description: item updated
-        400:
-          description: invalid input, object invalid
-        404:
-          description: an existing item does not exists
-      x-wso2-curl: |
-    delete:
-      tags:
-        - management
-      summary: "removes a challenge question set"
-      operationId: deleteChallengeQuestionSet
-      description: |
-        Removes an existing challenge question set from the system. By specifying the locale query parameter, questions of specific locale can be deleted within the Set.
-      parameters:
-        - $ref: '#/parameters/questionSetIdPathParam'
-        - $ref: '#/parameters/localeQueryParam'
-      responses:
-        200:
-          description: item deleted
-        400:
-          description: invalid input, object invalid
-        404:
-          description: a item does not exists
-      x-wso2-curl: |
-  /challenges/{challenge-set-id}/questions/{question-id}:
-    delete:
-      tags:
-        - management
-      summary: "removes a challenge question"
-      operationId: deleteChallengeQuestion
-      description: |
-        Removes an existing challenge question set from the system. By specifying the locale query parameter, locale specific entry for the question can be deleted.
-      parameters:
-        - $ref: '#/parameters/questionIdPathParam'
-        - $ref: '#/parameters/questionSetIdPathParam'
-        - $ref: '#/parameters/localeQueryParam'
-      responses:
-        200:
-          description: item deleted
-        400:
-          description: invalid input, object invalid
-        404:
-          description: a item does not exists
-      x-wso2-curl: |
-  /users/{user-id}/challenges:
-    get:
-      tags:
-        - developers
-      summary: searches challenge-question for a user
-      operationId: searchUserChallengeQuestion
-      description: |
-        Search for
-        available challenge-question in the system for the user.
-      parameters:
-        - $ref: '#/parameters/usernamePathParams'
-        - in: query
-          name: offset
-          description: number of records to skip for pagination
-          type: integer
-          format: int32
-          minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          type: integer
-          format: int32
-          minimum: 0
-          maximum: 50
-      responses:
-        200:
-          description: search results matching criteria
+             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+        500:
+          description: Server Error
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/ChallengeSet'
-        400:
-          description: bad input parameter
-  /users/{user-id}/challenge-answers:
+             $ref: '#/definitions/Error'
+      tags:
+      - Associations
+
+  /users/{user-id}/associations:
     post:
-      tags:
-        - developers
-      summary: "answers a new challenge question"
-      operationId: addChallengeAnswersOfAUser
       description: |
-        Adds a new challenge question answer to the system for a specific user.
+         This API is used associate two user accounts.
+      x-wso2-request: |
+      x-wso2-curl: |
+      x-wso2-response: |
+        "HTTP/1.1 201 Created"
+      summary: |
+        Associate users
       parameters:
-        - $ref: '#/parameters/usernamePathParams'
-        - in: body
-          name: challenge-answer
-          description: challenge-question with answer
+        -
+          name: association
+          in: body
+          description:  User Id of the associating user.
+          required: true
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/ChallengeAnswer'
-      responses:
-        201:
-          description: item created
-        400:
-          description: invalid input, object invalid
-        404:
-          description: a question doest not exist
-    get:
-      tags:
-        - developers
-      summary: "get user's challenge answers"
-      operationId: getChallengeAnswersOfAUser
-      description: |
-        Get answered challenges in the system for a specific user.
-      parameters:
-        - $ref: '#/parameters/usernamePathParams'
+            $ref: '#/definitions/AssociationRequest'
+        -
+         name: user-id
+         in: path
+         required: true
+         description: user id
+         type: string
 
       responses:
-        200:
-          description: earch results matching criteria
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/ChallengeAnswer'
-        400:
-          description: invalid input, object invalid
-        404:
-          description: a question doest not exist
-    put:
-      tags:
-        - developers
-      summary: "answers new challenge question combination"
-      operationId: updateChallengeAnswersOfAUser
-      description: |
-        Addsnew challenge question answers to the system for a specific user.
-      parameters:
-        - $ref: '#/parameters/usernamePathParams'
-        - in: body
-          name: challenge-answer
-          description: challenge-question with answer
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/ChallengeAnswer'
-      responses:
         201:
-          description: item created
+          description: Successfully created
         400:
-          description: invalid input, object invalid
-        404:
-          description: a question doest not exist
-    delete:
-      tags:
-        - developers
-      summary: "removes challenge question answers"
-      operationId: deleteChallengeAnswersOfAUser
-      description: |
-        Removes existing challenge question answers of a user
-      parameters:
-        - $ref: '#/parameters/usernamePathParams'
-      responses:
-        200:
-          description: item deleted
-        400:
-          description: invalid input, object invalid
-        404:
-          description: a item does not exists
-  /users/{user-id}/challenge-answers/{challenge-set-id}:
-    put:
-      tags:
-        - developers
-      summary: "answers a new challenge question"
-      operationId: updateChallengeAnswerOfAUser
-      description: |
-        Adds a new challenge question answer to the system for a specific user.
-      parameters:
-        - $ref: '#/parameters/questionSetIdPathParam'
-        - $ref: '#/parameters/usernamePathParams'
-        - in: body
-          name: challenge-answer
-          description: challenge-question with answer
+          description: Bad Request
           schema:
-            type: object
-            items:
-              $ref: '#/definitions/ChallengeAnswer'
-      responses:
-        201:
-          description: item created
-        400:
-          description: invalid input, object invalid
-        404:
-          description: a question doest not exist
-    delete:
+             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+        409:
+          description: Conflict
+          schema:
+             $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+             $ref: '#/definitions/Error'
       tags:
-        - developers
-      summary: "removes a challenge question answer"
-      operationId: deleteChallengeAnswerOfAUser
-      description: |
-        Removes existing challenge question answers of a user
-      parameters:
-        - $ref: '#/parameters/questionSetIdPathParam'
-        - $ref: '#/parameters/usernamePathParams'
-      responses:
-        200:
-          description: item deleted
-        400:
-          description: invalid input, object invalid
-        404:
-          description: a item does not exists
-  /users/me/challenges:
+        - Associations
     get:
+      x-wso2-request: |
+      x-wso2-curl: |
+      x-wso2-response: |
       tags:
-        - developers
-      summary: searches challenge-question for authenticated user
-      operationId: searchLoggedInUsersChallengeQuestion
-      description: |
-        Retrieve the
-        available challenge-question in the system for the authenticated user
+      - Associations
+      summary: Get user's associations
+      description: This API is used to retrieve the associations of the user.
       parameters:
-        - in: query
-          name: offset
-          description: number of records to skip for pagination
-          type: integer
-          format: int32
-          minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          type: integer
-          format: int32
-          minimum: 0
-          maximum: 50
+       -
+        name: user-id
+        in: path
+        required: true
+        description: user id
+        type: string
       responses:
         200:
-          description: search results matching criteria
+          description: Successful operation
           schema:
-            type: array
+            type: 'array'
             items:
-              $ref: '#/definitions/ChallengeSet'
-        400:
-          description: bad input parameter
-  /users/me/challenge-answers:
-    post:
-      tags:
-        - developers
-      summary: "answers a new challenge question"
-      operationId: addLoggedInUsersChallengeAnswers
-      description: |
-        Adds a new challenge question answer to the system
-      parameters:
-        - $ref: '#/parameters/usernamePathParams'
-        - in: body
-          name: challenge-answer
-          description: challenge-question with answer
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/ChallengeAnswer'
-      responses:
-        201:
-          description: item created
-        400:
-          description: invalid input, object invalid
+              $ref: '#/definitions/User'
+        204:
+          description: No content
         404:
-          description: a question doest not exist
-    get:
-      tags:
-        - developers
-      summary: "get user's challenge answers"
-      operationId: getChallengeAnswersOfLoggedInUser
-      description: |
-        Get answered challenges in the system for a specific user.
+          description: Not Found
+          schema:
+             $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized request
+        500:
+          description: Server Error
+          schema:
+             $ref: '#/definitions/Error'
+    delete:
       parameters:
-        - $ref: '#/parameters/usernamePathParams'
+        -
+          name : user-id
+          in : path
+          required: true
+          type: string
+      summary: Delete user's all user associations
+      description: This API is used to delete all associations of the  user.
+      responses:
+        200:
+          description: OK
+        401:
+          description: Unauthorized request
+        404:
+          description: Not Found
+          schema:
+             $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+             $ref: '#/definitions/Error'
+      tags:
+      - Associations
 
-      responses:
-        200:
-          description: earch results matching criteria
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/ChallengeAnswer'
-        400:
-          description: invalid input, object invalid
-        404:
-          description: results doest not exist
+  /users/{user-id}/associations/{associate-user-id}}:
     delete:
-      tags:
-        - developers
-      summary: "removes challenge question answers"
-      operationId: deleteLoggenInUsersChallengeAnswers
-      description: |
-        Removes an existing challenge question answers of the authenticated user
       parameters:
-        - $ref: '#/parameters/usernamePathParams'
+        -
+          name : user-id
+          in : path
+          required: true
+          type: string
+        -
+          name : associate-user-id
+          in : path
+          required: true
+          type: string
+      summary: Delete user's selected user association
+      description: This API is used to delete a selected association of the  user.
       responses:
         200:
-          description: item deleted
-        400:
-          description: invalid input, object invalid
+          description: OK
+        401:
+          description: Unauthorized request
         404:
-          description: a item does not exists
-  /users/me/challenge-answers/{challenge-set-id}:
-    put:
-      tags:
-        - developers
-      summary: "answers a new challenge question"
-      operationId: updateChallengeAnswerOfLoggedInUser
-      description: |
-        Adds a new challenge question answer to the system for authenticated user.
-      parameters:
-        - $ref: '#/parameters/questionSetIdPathParam'
-        - $ref: '#/parameters/usernamePathParams'
-        - in: body
-          name: challenge-answer
-          description: challenge-question with answer
+          description: Not Found
           schema:
-            type: object
-            items:
-              $ref: '#/definitions/ChallengeAnswer'
-      responses:
-        201:
-          description: item created
-        400:
-          description: invalid input, object invalid
-        404:
-          description: a question doest not exist
-    delete:
+             $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+             $ref: '#/definitions/Error'
       tags:
-        - developers
-      summary: "removes a challenge question answer"
-      operationId: deleteChallengeAnswerOfLoggedInUser
-      description: |
-        Removes existing challenge question answers of authenticated user
-      parameters:
-        - $ref: '#/parameters/questionSetIdPathParam'
-        - $ref: '#/parameters/usernamePathParams'
-      responses:
-        200:
-          description: item deleted
-        400:
-          description: invalid input, object invalid
-        404:
-          description: a item does not exists
-parameters:
-    usernamePathParams:
-      in: path
-      name: user-id
-      required: true
-      type: string
-      description: username of the user
-    questionSetIdPathParam:
-      in: path
-      name: challenge-set-id
-      required: true
-      type: string
-      description: Challenge Question set Id
-    questionIdPathParam:
-      in: path
-      name: question-id
-      required: true
-      type: string
-      description: Challenge Question Id
-    localeQueryParam:
-      in: query
-      name: locale
-      description: pass an optional search string for looking up challenge-question based on locale
-      required: false
-      type: string
+      - Associations
 
 definitions:
-    #-----------------------------------------------------
-    # ChallengeSet Properties object
-    #-----------------------------------------------------
-  ChallengeSet:
+
+#-----------------------------------------------------
+# The Error Response  object
+#-----------------------------------------------------
+  Error:
     type: object
-    required:
-      - challenge-set-id
-      - questions
     properties:
-      question-set-id:
+      code:
         type: string
-        example: challengeQuestion1
-      questions:
+      message:
+        type: string
+      description:
+        type: string
+
+#-----------------------------------------------------
+# The User Response  object
+#-----------------------------------------------------
+  User:
+    type: object
+    properties:
+      user-id:
+        type: string
+        example: '23e22434234234329jj9iin'
+      username:
+        type: string
+        example: john
+      user-store-domain:
+        type: string
+        example: PRIMARY
+#-----------------------------------------------------
+# The Property  object
+#-----------------------------------------------------
+  Property:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+
+#-----------------------------------------------------
+# The AssociationRequest Association Request
+#-----------------------------------------------------
+  AssociationRequest:
+    type: object
+    properties:
+      associate-user-id:
+        type: string
+        example: johnb
+      properties:
         type: array
         items:
-          $ref: '#/definitions/ChallengeQuestion'
-  #-----------------------------------------------------
-  # ChallengeQuestion Properties object
-  #-----------------------------------------------------
-  ChallengeQuestion:
+          $ref: '#/definitions/Property'
+
+#-----------------------------------------------------
+# The AssociationSwitchRequest Association Request
+#-----------------------------------------------------
+  AssociationSwitchRequest:
     type: object
-    required:
-      - locale
-      - question
-      - question-id
     properties:
-      locale:
+      user-id:
         type: string
-        example: en_US
-      question:
-        type: string
-        example: What is your favorite travel destination ?
-      question-id:
-        type: string
-        example: question1
-  #-----------------------------------------------------
-  # ChallengeAnswer Properties object
-  #-----------------------------------------------------
-  ChallengeAnswer:
+        example: john
+      properties:
+        type: array
+        items:
+          $ref: '#/definitions/Property'
+
+#-----------------------------------------------------
+# The AssociationUserRequest Association User Request
+#-----------------------------------------------------
+  AssociationUserRequest:
     type: object
-    required:
-      - answer
-      - challenge-question
     properties:
-      question-set-id:
+      user-id:
         type: string
-        example: challengeQuestionSet1
-      challenge-question:
-          $ref: '#/definitions/ChallengeQuestion'
-      answer:
+        example: john
+      password:
         type: string
-        example: Colombo
-    #-----------------------------------------------------
-  # ChallengeAnswer Properties object
-  #-----------------------------------------------------
-  ChallengeQuestionPatch:
-    type: object
-    required:
-      - operation
-      - challenge-question
-    properties:
-      challenge-question:
-          $ref: '#/definitions/ChallengeQuestion'
-      operation:
-        type: string
-        example: add
-securityDefinitions:
-  BasicAuth:
-    type: basic
-  # ClientCertificate:
-  #   type: custom
-  OAuth2:
-    type: oauth2
-    flow: accessCode
-    authorizationUrl: https://localhost:9443/oauth/authorize
-    tokenUrl: https://localhost:9443/oauth/token
-    scopes:
-      read: Grants read access
-      write: Grants write access
-      admin: Grants read and write access to administrative information
+        example: userpassword
+      properties:
+        type: array
+        items:
+          $ref: '#/definitions/Property'
 # Added by API Auto Mocking Plugin
 host: virtserver.swaggerhub.com
-basePath: /ayshsandu/ChallengeQuestions/1.0.0
+basePath: /consent/Associations/1.0.0
