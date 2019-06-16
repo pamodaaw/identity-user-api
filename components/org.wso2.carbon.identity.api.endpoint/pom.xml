@@ -36,7 +36,7 @@
                             <directory>src/main/webapp</directory>
                         </resource>
                     </webResources>
-                    <warName>api#identity#users#v1.0</warName>
+                    <warName>api#identity#v1.0</warName>
                 </configuration>
             </plugin>
 
@@ -48,6 +48,10 @@
                     <packageName>association</packageName>
                     <inputSpec>${project.basedir}/src/main/resources/association.yaml</inputSpec>
                 </configuration>
+                <!--<configuration>-->
+                    <!--<packageName>challenge</packageName>-->
+                    <!--<inputSpec>${project.basedir}/src/main/resources/challenge.yaml</inputSpec>-->
+                <!--</configuration>-->
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
