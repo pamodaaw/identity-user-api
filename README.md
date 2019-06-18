@@ -14,9 +14,9 @@ please follow the given steps.
 ```
 git clone https://github.com/IsuraD/swagger2cxf-maven-plugin.git
 ```
-2. Checkout the branch **configurable_package**
+2. Checkout the branch **swagger_to_jar**
 ```
-git checkout configurable_package
+git checkout swagger_to_jar
 ```
 3. Build the plugin 
 ```
@@ -28,9 +28,9 @@ Now, the locally built swagger2cxf plugin will be picked from the local .m2 repo
 1. Include the API definition in the given location of this maven project (identity-api). Assume the file name of the
  API definition is *api.yaml*
     ```
-    +-- identity-api
+    +-- identity-user-api
     |   +-- components
-    |       +-- org.wso2.carbon.identity.api.endpoint
+    |       +-- org.wso2.carbon.identity.api.user.<resource>
     |           +-- src
     |               +-- main
     |                   +-- resources

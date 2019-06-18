@@ -24,12 +24,12 @@
         <version>1</version>
     </parent>
 
-    <groupId>org.wso2.carbon.identity.api</groupId>
+    <groupId>org.wso2.carbon.identity.user.api</groupId>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>identity-api</artifactId>
+    <artifactId>identity-user-api</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
-    <name>WSO2 Carbon Identity API Module</name>
+    <name>WSO2 Identity Server - User API Module</name>
     <description>
 
     </description>
@@ -180,6 +180,30 @@
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
                 <version>${jackson-jaxrs-json-provider.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.scr.ds-annotations</artifactId>
+                <version>${org.apache.felix.annotations.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.governance</groupId>
+                <artifactId>org.wso2.carbon.identity.recovery</artifactId>
+                <version>${identity.governance.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.identity.framework</groupId>-->
+            <!--<artifactId>org.wso2.carbon.identity.application.common</artifactId>-->
+            <!--<version>${carbon.identity.framework.version}</version>-->
+            <!--<scope>provided</scope>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.identity.framework</groupId>-->
+            <!--<artifactId>org.wso2.carbon.identity.base</artifactId>-->
+            <!--<version>${carbon.identity.framework.version}</version>-->
+            <!--<scope>provided</scope>-->
+            <!--</dependency>-->
         </dependencies>
     </dependencyManagement>
 
@@ -274,10 +298,14 @@
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
         <junit.version>4.12</junit.version>
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
+        <org.apache.felix.annotations.version>1.2.4</org.apache.felix.annotations.version>
+        <identity.governance.version>1.1.69-SNAPSHOT</identity.governance.version>
+        <carbon.identity.framework.version>5.12.401</carbon.identity.framework.version>
     </properties>
 
     <modules>
-        <module>components/org.wso2.carbon.identity.api.endpoint</module>
+        <module>components/org.wso2.carbon.identity.api.user.association</module>
+        <module>components/org.wso2.carbon.identity.api.user.challenge</module>
     </modules>
 
 </project>
