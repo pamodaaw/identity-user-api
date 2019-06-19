@@ -1,0 +1,30 @@
+package org.wso2.carbon.identity.rest.api.user.association.v10;
+
+import org.wso2.carbon.identity.rest.api.user.association.v10.*;
+import org.wso2.carbon.identity.rest.api.user.association.v10.dto.*;
+
+import org.wso2.carbon.identity.rest.api.user.association.v10.dto.ErrorDTO;
+import org.wso2.carbon.identity.rest.api.user.association.v10.dto.UserDTO;
+import org.wso2.carbon.identity.rest.api.user.association.v10.dto.AssociationUserRequestDTO;
+import org.wso2.carbon.identity.rest.api.user.association.v10.dto.AssociationSwitchRequestDTO;
+import org.wso2.carbon.identity.rest.api.user.association.v10.dto.AssociationRequestDTO;
+
+import java.util.List;
+
+import java.io.InputStream;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+
+import javax.ws.rs.core.Response;
+
+public abstract class UsersApiService {
+    public abstract Response usersMeAssociationsAssociateUserIdDelete(String associateUserId);
+    public abstract Response usersMeAssociationsDelete();
+    public abstract Response usersMeAssociationsGet();
+    public abstract Response usersMeAssociationsPost(AssociationUserRequestDTO association);
+    public abstract Response usersMeAssociationsSwitchPut(AssociationSwitchRequestDTO switchUserReqeust);
+    public abstract Response usersUserIdAssociationsAssociateUserIdDelete(String userId,String associateUserId);
+    public abstract Response usersUserIdAssociationsDelete(String userId);
+    public abstract Response usersUserIdAssociationsGet(String userId);
+    public abstract Response usersUserIdAssociationsPost(AssociationRequestDTO association,String userId);
+}
+
