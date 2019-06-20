@@ -1,5 +1,6 @@
 package org.wso2.carbon.identity.rest.api.user.challenge.v1;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.factories.UserIdApiServiceFactory;
 
 import io.swagger.annotations.ApiParam;
@@ -19,7 +20,8 @@ import javax.ws.rs.*;
 @io.swagger.annotations.Api(value = "/{user-id}", description = "the {user-id} API")
 public class UserIdApi  {
 
-   private final UserIdApiService delegate = UserIdApiServiceFactory.getUserIdApi();
+   @Autowired
+   private  UserIdApiService delegate ;
 
     @POST
     @Path("/challenge-answers")

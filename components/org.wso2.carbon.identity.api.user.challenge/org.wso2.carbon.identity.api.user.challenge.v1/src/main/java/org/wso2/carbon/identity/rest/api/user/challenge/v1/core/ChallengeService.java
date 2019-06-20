@@ -26,6 +26,7 @@ import org.wso2.carbon.identity.recovery.ChallengeQuestionManager;
 import org.wso2.carbon.identity.recovery.IdentityRecoveryException;
 import org.wso2.carbon.identity.recovery.model.ChallengeQuestion;
 import org.wso2.carbon.identity.recovery.model.UserChallengeAnswer;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.core.functions.ChallengeQuestionToExternal;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeAnswerDTO;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeQuestionDTO;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeQuestionPatchDTO;
@@ -37,13 +38,14 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.wso2.carbon.identity.recovery.IdentityRecoveryConstants.LOCALE_EN_US;
 import static org.wso2.carbon.identity.rest.api.user.challenge.v1.core.Constants.OPERATION_ADD;
 
 public class ChallengeService {
-    private static Log log = LogFactory.getLog(ChallengeService.class);
+    private static final Log log = LogFactory.getLog(ChallengeService.class);
     private static ChallengeQuestionManager questionManager = ChallengeQuestionManager.getInstance();
     public static final String WSO2_CLAIM_DIALECT = "http://wso2.org/claims/";
 
@@ -56,7 +58,7 @@ public class ChallengeService {
         return tenantDomain;
     }
 
-    public static List<ChallengeSetDTO> getChallenges(String locale, Integer offset, Integer limit) throws IdentityRecoveryException {
+    public List<ChallengeSetDTO> getChallenges(String locale, Integer offset, Integer limit) throws IdentityRecoveryException {
 
         if (StringUtils.isEmpty(locale)) {
             return buildChallengesDTO(questionManager.getAllChallengeQuestions(getTenantDomainFromContext()),
@@ -68,7 +70,7 @@ public class ChallengeService {
 
     }
 
-    public static List<ChallengeSetDTO> getChallengesForUser(String userId, Integer offset, Integer limit) throws IdentityRecoveryException {
+    public List<ChallengeSetDTO> getChallengesForUser(String userId, Integer offset, Integer limit) throws IdentityRecoveryException {
 
         User user = getUserFromRequest(userId);
         return buildChallengesDTO(questionManager.getAllChallengeQuestionsForUser(getTenantDomainFromContext(), user),
@@ -124,7 +126,7 @@ public class ChallengeService {
         if (StringUtils.isEmpty(locale)) {
             locale = StringUtils.EMPTY;
         }
-        questionManager.deleteChallengeQuestionSet(challengeSetId, locale, getTenantDomainFromContext());
+//        questionManager.deleteChallengeQuestionSet(challengeSetId, locale, getTenantDomainFromContext());
         return true;
     }
 
@@ -226,27 +228,24 @@ public class ChallengeService {
                 .getLocale());
     }
 
-    private static List<ChallengeSetDTO> buildChallengesDTO(List<ChallengeQuestion> challengeQuestions, Integer offset, Integer limit) {
+    private List<ChallengeSetDTO> buildChallengesDTO(List<ChallengeQuestion> challengeQuestions, Integer offset, Integer limit) {
 //        List<ChallengeQuestion> challenges = challengeQuestions.stream()
 //                .filter( distinctByKey(p -> p.getQuestionSetId()) )
 //                .collect( Collectors.toList() );
 
         Map<String, List<ChallengeQuestion>> challengeSets = groupChallenges(challengeQuestions);
 
-        List<ChallengeSetDTO> challengeSetDTOs = new ArrayList<>();
-        for (Map.Entry<String, List<ChallengeQuestion>> entry : challengeSets.entrySet()) {
-            String questionSetId = entry.getKey();
-            List<ChallengeQuestion> questions = entry.getValue();
-            ChallengeSetDTO challenge = getChallengeSetDTO(questionSetId, questions);
-            challengeSetDTOs.add(challenge);
-        }
-        return challengeSetDTOs;
+
+        return challengeSets.entrySet().stream().map((e) ->
+             getChallengeSetDTO(e.getKey(),  e.getValue())
+        ).collect(Collectors.toList());
     }
 
     private static ChallengeSetDTO getChallengeSetDTO(String questionSetId, List<ChallengeQuestion> questions) {
         ChallengeSetDTO challenge = new ChallengeSetDTO();
         challenge.setQuestionSetId(questionSetId);
-        List<ChallengeQuestionDTO> questionDTOs = getChallengeQuestionDTOs(questions);
+        List<ChallengeQuestionDTO> questionDTOs = questions.stream().map(new ChallengeQuestionToExternal()).collect(
+                Collectors.toList());
         challenge.setQuestions(questionDTOs);
         return challenge;
     }
