@@ -19,27 +19,24 @@
 package org.wso2.carbon.identity.rest.api.user.challenge.v1.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.wso2.carbon.identity.recovery.IdentityRecoveryException;
-import org.wso2.carbon.identity.rest.api.user.challenge.v1.*;
-
-import org.wso2.carbon.identity.rest.api.user.challenge.v1.core.ChallengeService;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.ApiResponseMessage;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.UserIdApiService;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.core.UserChallengeService;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeAnswerDTO;
 
-import java.util.List;
-
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 public class UserIdApiServiceImpl extends UserIdApiService {
 
     @Autowired
-    private ChallengeService challengeService;
+    private UserChallengeService challengeService;
 
 
     @Override
     public Response addChallengeAnswersOfAUser(String userId,List<ChallengeAnswerDTO> challengeAnswer){
         // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        return Response.ok().entity(challengeService.setChallengeAnswersOfUser(userId, challengeAnswer)).build();
     }
     @Override
     public Response deleteChallengeAnswerOfAUser(String challengeSetId,String userId){
@@ -54,17 +51,12 @@ public class UserIdApiServiceImpl extends UserIdApiService {
     @Override
     public Response getAnsweredChallengesOfAUser(String userId){
         // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        return Response.ok().entity(challengeService.getChallengeAnswersOfUser(userId)).build();
     }
     @Override
     public Response getChallengesForAUser(String userId,Integer offset,Integer limit){
         // do some magic!
-        try {
-            return Response.ok().entity(challengeService.getChallengesForUser(userId, offset, limit)).build();
-        } catch (IdentityRecoveryException e) {
-            //TODO handle and throw correct error
-            throw new WebApplicationException();
-        }
+        return Response.ok().entity(challengeService.getChallengesForUser(userId, offset, limit)).build();
     }
     @Override
     public Response updateChallengeAnswerOfAUser(String challengeSetId,String userId,ChallengeAnswerDTO challengeAnswer){

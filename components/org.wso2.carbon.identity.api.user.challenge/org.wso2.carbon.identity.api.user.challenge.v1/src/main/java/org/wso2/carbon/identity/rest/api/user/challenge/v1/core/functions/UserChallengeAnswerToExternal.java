@@ -16,22 +16,19 @@
 
 package org.wso2.carbon.identity.rest.api.user.challenge.v1.core.functions;
 
-import org.wso2.carbon.identity.recovery.model.ChallengeQuestion;
-import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeQuestionDTO;
-import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeSetDTO;
+import org.wso2.carbon.identity.recovery.model.UserChallengeAnswer;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnswerDTO;
 
 import java.util.function.Function;
 
-public class ChallengeQuestionToExternal implements Function<ChallengeQuestion, ChallengeQuestionDTO> {
+public class UserChallengeAnswerToExternal implements Function<UserChallengeAnswer, UserChallengeAnswerDTO> {
 
     @Override
-    public ChallengeQuestionDTO apply(ChallengeQuestion challengeQuestion) {
-
-        ChallengeQuestionDTO question = new ChallengeQuestionDTO();
-        question.setLocale(challengeQuestion.getLocale());
-        question.setQuestion(challengeQuestion.getQuestion());
-        question.setQuestionId(challengeQuestion.getQuestionId());
-
-        return question;
+    public UserChallengeAnswerDTO apply(UserChallengeAnswer userChallengeAnswer) {
+        UserChallengeAnswerDTO userChallengeAnswerDTO = new UserChallengeAnswerDTO();
+        userChallengeAnswerDTO.setAnswer(userChallengeAnswer.getAnswer());
+        userChallengeAnswerDTO.setQuestion(userChallengeAnswer.getQuestion().getQuestion());
+        userChallengeAnswerDTO.setQuestionSetId(userChallengeAnswer.getQuestion().getQuestionSetId());
+        return userChallengeAnswerDTO;
     }
 }
