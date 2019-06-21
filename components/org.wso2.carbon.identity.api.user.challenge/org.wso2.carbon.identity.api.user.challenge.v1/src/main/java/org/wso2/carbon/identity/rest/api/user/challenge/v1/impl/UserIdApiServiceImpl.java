@@ -41,12 +41,12 @@ public class UserIdApiServiceImpl extends UserIdApiService {
     @Override
     public Response deleteChallengeAnswerOfAUser(String challengeSetId,String userId){
         // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        return Response.ok().entity(challengeService.removeChallengeAnswerOfUser(userId, challengeSetId)).build();
     }
     @Override
     public Response deleteChallengeAnswersOfAUser(String userId){
         // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        return Response.ok().entity(challengeService.removeChallengeAnswersOfUser(userId)).build();
     }
     @Override
     public Response getAnsweredChallengesOfAUser(String userId){
@@ -61,12 +61,12 @@ public class UserIdApiServiceImpl extends UserIdApiService {
     @Override
     public Response updateChallengeAnswerOfAUser(String challengeSetId,String userId,ChallengeAnswerDTO challengeAnswer){
         // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        return Response.ok().entity(challengeService.updateChallengeAnswerOfUser(userId, challengeSetId, challengeAnswer)).build();
     }
     @Override
     public Response updateChallengeAnswersOfAUser(String userId,List<ChallengeAnswerDTO> challengeAnswers){
         // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        return Response.ok().entity(challengeService.updateChallengeAnswersOfUser(userId, challengeAnswers)).build();
     }
 
 }

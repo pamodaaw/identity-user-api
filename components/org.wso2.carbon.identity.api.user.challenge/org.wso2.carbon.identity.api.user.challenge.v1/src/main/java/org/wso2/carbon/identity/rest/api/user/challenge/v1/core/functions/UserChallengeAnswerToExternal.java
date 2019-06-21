@@ -21,6 +21,8 @@ import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnsw
 
 import java.util.function.Function;
 
+import static org.wso2.carbon.identity.rest.api.user.challenge.v1.core.UserChallengeService.WSO2_CLAIM_DIALECT;
+
 public class UserChallengeAnswerToExternal implements Function<UserChallengeAnswer, UserChallengeAnswerDTO> {
 
     @Override
@@ -28,7 +30,8 @@ public class UserChallengeAnswerToExternal implements Function<UserChallengeAnsw
         UserChallengeAnswerDTO userChallengeAnswerDTO = new UserChallengeAnswerDTO();
         userChallengeAnswerDTO.setAnswer(userChallengeAnswer.getAnswer());
         userChallengeAnswerDTO.setQuestion(userChallengeAnswer.getQuestion().getQuestion());
-        userChallengeAnswerDTO.setQuestionSetId(userChallengeAnswer.getQuestion().getQuestionSetId());
+        userChallengeAnswerDTO.setQuestionSetId(userChallengeAnswer.getQuestion().getQuestionSetId().split
+                (WSO2_CLAIM_DIALECT)[1]);
         return userChallengeAnswerDTO;
     }
 }

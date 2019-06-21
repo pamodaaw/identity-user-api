@@ -83,10 +83,63 @@ public class UserChallengeService {
         User user = extractUser(userId);
         List<UserChallengeAnswer> answers = buildChallengeAnswers(challengeAnswers);
         try {
+            List<String> answeredList = questionManager.getChallengeQuestionUris(user);
+            if (answeredList.size() > 0) {
+                throw new APIError(Response.Status.CONFLICT, new Error.Builder().withCode("somecodee")
+                        .withMessage("Challenge Answers Already set").withDescription("User has already answered. " +
+                                "Hence, Unable to add new Answers.").build());
+            }
             questionManager.setChallengesOfUser(user, answers.toArray(new UserChallengeAnswer[answers.size()]));
         } catch (IdentityRecoveryException e) {
             //TODO handle and throw correct error
-            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR , new Error.Builder().withCode("somecodee")
+            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, new Error.Builder().withCode("somecodee")
+                    .withMessage("some message").withDescription("some description").build());
+
+        }
+        return true;
+    }
+
+    public boolean updateChallengeAnswersOfUser(String userId, List<ChallengeAnswerDTO> newChallengeAnswers) {
+
+        User user = extractUser(userId);
+        List<UserChallengeAnswer> answers = buildChallengeAnswers(newChallengeAnswers);
+        try {
+            List<String> answeredList = questionManager.getChallengeQuestionUris(user);
+            if (answeredList.size() < 1) {
+                throw new APIError(Response.Status.NOT_FOUND, new Error.Builder().withCode("somecodee")
+                        .withMessage("Challenge Answers not found").withDescription("User has not answered any " +
+                                "challenges. Hence, Unable to update.").build());
+            }
+            questionManager.setChallengesOfUser(user, answers.toArray(new UserChallengeAnswer[answers.size()]));
+
+        } catch (IdentityRecoveryException e) {
+            //TODO handle and throw correct error
+            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, new Error.Builder().withCode("somecodee")
+                    .withMessage("some message").withDescription("some description").build());
+
+        }
+        return true;
+    }
+
+    public boolean updateChallengeAnswerOfUser(String userId, String challengeSetId, ChallengeAnswerDTO
+            challengeAnswer) {
+
+        //TODO This will override all the questions, need to implement backend to update only one
+        User user = extractUser(userId);
+        try {
+            List<String> answeredList = questionManager.getChallengeQuestionUris(user);
+            if (answeredList.isEmpty() || !answeredList.contains(WSO2_CLAIM_DIALECT + challengeSetId)) {
+                throw new APIError(Response.Status.NOT_FOUND, new Error.Builder().withCode("somecodee")
+                        .withMessage("Challenge Answer not found").withDescription("User has not answered this " +
+                                "question. Hence, Unable to update it").build());
+            }
+            UserChallengeAnswer answer = new UserChallengeAnswer(
+                    createChallenceQuestion(challengeAnswer.getQuestionSetId(), challengeAnswer.getChallengeQuestion()),
+                    challengeAnswer.getAnswer());
+            questionManager.setChallengeOfUser(user, answer);
+        } catch (IdentityRecoveryException e) {
+            //TODO handle and throw correct error
+            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, new Error.Builder().withCode("somecodee")
                     .withMessage("some message").withDescription("some description").build());
 
         }
@@ -100,9 +153,33 @@ public class UserChallengeService {
             return getUserChallengeAnswerDTOsOfUser(user);
         } catch (IdentityRecoveryException e) {
             //TODO handle and throw correct error
-            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR , new Error.Builder().withCode("somecodee")
+            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, new Error.Builder().withCode("somecodee")
                     .withMessage("some message").withDescription("some description").build());
         }
+    }
+
+    public boolean removeChallengeAnswersOfUser(String userId) {
+        User user = extractUser(userId);
+        try {
+            questionManager.removeChallengeAnswersOfUser(user);
+        } catch (IdentityRecoveryException e) {
+            //TODO handle and throw correct error
+            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, new Error.Builder().withCode("somecodee")
+                    .withMessage("some message").withDescription("some description").build());
+        }
+        return true;
+    }
+
+    public boolean removeChallengeAnswerOfUser(String userId, String challengeSetId) {
+        User user = extractUser(userId);
+        try {
+            questionManager.removeChallengeAnswerOfUser(user, WSO2_CLAIM_DIALECT + challengeSetId);
+        } catch (IdentityRecoveryException e) {
+            //TODO handle and throw correct error
+            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, new Error.Builder().withCode("somecodee")
+                    .withMessage("some message").withDescription("some description").build());
+        }
+        return true;
     }
 
 
@@ -157,6 +234,7 @@ public class UserChallengeService {
     }
 
     private User extractUser(String userId) {
+
         String decodedUsername = new String(Base64.getDecoder().decode(userId));
 
         if (StringUtils.isBlank(userId)) {
@@ -292,6 +370,13 @@ public class UserChallengeService {
     private List<ChallengeQuestion> filterChallengesBySetId(List<ChallengeQuestion> challengeQuestions, String setId) {
         return challengeQuestions.stream()
                 .filter(question -> question.getQuestionSetId().split(WSO2_CLAIM_DIALECT)[1].equals(setId))
+                .collect(Collectors.toList());
+    }
+
+    private List<UserChallengeAnswer> filterChallengeAnswersBySetId(UserChallengeAnswer[] challengeAnswers, String
+            setId) {
+        return Arrays.stream(challengeAnswers)
+                .filter(answer -> setId.equals(answer.getQuestion().getQuestionSetId().split(WSO2_CLAIM_DIALECT)[1]))
                 .collect(Collectors.toList());
     }
 }
