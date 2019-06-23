@@ -112,7 +112,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/UserChallengeAnswer'
+              $ref: '#/definitions/UserChallengeAnswerResponse'
         401:
           $ref: '#/responses/Unauthorized'
         404:
@@ -179,7 +179,7 @@ paths:
           name: challengeAnswer
           description: challenge-question with answer
           schema:
-            $ref: '#/definitions/ChallengeAnswer'
+            $ref: '#/definitions/UserChallengeAnswer'
       responses:
         200:
           $ref: '#/responses/OK'
@@ -207,7 +207,7 @@ paths:
           name: challengeAnswer
           description: challenge-question with answer
           schema:
-            $ref: '#/definitions/ChallengeAnswer'
+            $ref: '#/definitions/UserChallengeAnswer'
       responses:
         200:
           $ref: '#/responses/OK'
@@ -318,7 +318,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/UserChallengeAnswer'
+              $ref: '#/definitions/UserChallengeAnswerResponse'
         401:
           $ref: '#/responses/Unauthorized'
         500:
@@ -356,7 +356,7 @@ paths:
           name: challengeAnswer
           description: challenge-question with answer
           schema:
-            $ref: '#/definitions/ChallengeAnswer'
+            $ref: '#/definitions/UserChallengeAnswer'
       responses:
         200:
           $ref: '#/responses/OK'
@@ -384,7 +384,7 @@ paths:
           name: challenge-answer
           description: challenge-question with answer
           schema:
-           $ref: '#/definitions/ChallengeAnswer'
+           $ref: '#/definitions/UserChallengeAnswer'
       responses:
         200:
           $ref: '#/responses/OK'
@@ -482,7 +482,7 @@ definitions:
     type: object
     required:
       - answer
-      - challengeQuestion
+      - challenge
     properties:
       questionSetId:
         type: string
@@ -499,7 +499,22 @@ definitions:
     type: object
     required:
       - answer
-      - challengeQuestion
+      - challenge
+    properties:
+      challengeQuestion:
+          $ref: '#/definitions/ChallengeQuestion'
+      answer:
+        type: string
+        example: Colombo
+  #-----------------------------------------------------
+  # UserChallengeAnswerResponse Properties object
+  #-----------------------------------------------------
+  UserChallengeAnswerResponse:
+    type: object
+    required:
+      - answer
+      - questionSetId
+      - question
     properties:
       questionSetId:
         type: string
@@ -510,20 +525,6 @@ definitions:
       answer:
         type: string
         example: Colombo
-  #-----------------------------------------------------
-  # ChallengeAnswer Properties object
-  #-----------------------------------------------------
-  ChallengeQuestionPatch:
-    type: object
-    required:
-      - operation
-      - challengeQuestion
-    properties:
-      challengeQuestion:
-          $ref: '#/definitions/ChallengeQuestion'
-      operation:
-        type: string
-        example: add
   #-----------------------------------------------------
   # The Error Response  object
   #-----------------------------------------------------

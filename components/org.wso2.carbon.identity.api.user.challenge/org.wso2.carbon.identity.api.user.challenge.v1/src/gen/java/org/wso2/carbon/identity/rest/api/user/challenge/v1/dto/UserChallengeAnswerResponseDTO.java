@@ -1,6 +1,5 @@
 package org.wso2.carbon.identity.rest.api.user.challenge.v1.dto;
 
-import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeQuestionDTO;
 
 import io.swagger.annotations.*;
 import com.fasterxml.jackson.annotation.*;
@@ -12,14 +11,14 @@ import javax.validation.constraints.NotNull;
 
 
 @ApiModel(description = "")
-public class ChallengeAnswerDTO  {
+public class UserChallengeAnswerResponseDTO  {
   
   
-  
+  @NotNull
   private String questionSetId = null;
   
-  
-  private ChallengeQuestionDTO challengeQuestion = null;
+  @NotNull
+  private String question = null;
   
   @NotNull
   private String answer = null;
@@ -27,7 +26,7 @@ public class ChallengeAnswerDTO  {
   
   /**
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(required = true, value = "")
   @JsonProperty("questionSetId")
   public String getQuestionSetId() {
     return questionSetId;
@@ -39,13 +38,13 @@ public class ChallengeAnswerDTO  {
   
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("challengeQuestion")
-  public ChallengeQuestionDTO getChallengeQuestion() {
-    return challengeQuestion;
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty("question")
+  public String getQuestion() {
+    return question;
   }
-  public void setChallengeQuestion(ChallengeQuestionDTO challengeQuestion) {
-    this.challengeQuestion = challengeQuestion;
+  public void setQuestion(String question) {
+    this.question = question;
   }
 
   
@@ -65,10 +64,10 @@ public class ChallengeAnswerDTO  {
   @Override
   public String toString()  {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ChallengeAnswerDTO {\n");
+    sb.append("class UserChallengeAnswerResponseDTO {\n");
     
     sb.append("  questionSetId: ").append(questionSetId).append("\n");
-    sb.append("  challengeQuestion: ").append(challengeQuestion).append("\n");
+    sb.append("  question: ").append(question).append("\n");
     sb.append("  answer: ").append(answer).append("\n");
     sb.append("}\n");
     return sb.toString();

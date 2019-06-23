@@ -1,5 +1,6 @@
 package org.wso2.carbon.identity.rest.api.user.challenge.v1.dto;
 
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeQuestionDTO;
 
 import io.swagger.annotations.*;
 import com.fasterxml.jackson.annotation.*;
@@ -15,10 +16,7 @@ public class UserChallengeAnswerDTO  {
   
   
   
-  private String questionSetId = null;
-  
-  
-  private String question = null;
+  private ChallengeQuestionDTO challengeQuestion = null;
   
   @NotNull
   private String answer = null;
@@ -27,24 +25,12 @@ public class UserChallengeAnswerDTO  {
   /**
    **/
   @ApiModelProperty(value = "")
-  @JsonProperty("questionSetId")
-  public String getQuestionSetId() {
-    return questionSetId;
+  @JsonProperty("challengeQuestion")
+  public ChallengeQuestionDTO getChallengeQuestion() {
+    return challengeQuestion;
   }
-  public void setQuestionSetId(String questionSetId) {
-    this.questionSetId = questionSetId;
-  }
-
-  
-  /**
-   **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("question")
-  public String getQuestion() {
-    return question;
-  }
-  public void setQuestion(String question) {
-    this.question = question;
+  public void setChallengeQuestion(ChallengeQuestionDTO challengeQuestion) {
+    this.challengeQuestion = challengeQuestion;
   }
 
   
@@ -66,8 +52,7 @@ public class UserChallengeAnswerDTO  {
     StringBuilder sb = new StringBuilder();
     sb.append("class UserChallengeAnswerDTO {\n");
     
-    sb.append("  questionSetId: ").append(questionSetId).append("\n");
-    sb.append("  question: ").append(question).append("\n");
+    sb.append("  challengeQuestion: ").append(challengeQuestion).append("\n");
     sb.append("  answer: ").append(answer).append("\n");
     sb.append("}\n");
     return sb.toString();

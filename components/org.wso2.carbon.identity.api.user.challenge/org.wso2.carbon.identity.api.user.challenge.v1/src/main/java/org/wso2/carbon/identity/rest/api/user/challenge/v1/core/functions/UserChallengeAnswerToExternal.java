@@ -18,16 +18,17 @@ package org.wso2.carbon.identity.rest.api.user.challenge.v1.core.functions;
 
 import org.wso2.carbon.identity.recovery.model.UserChallengeAnswer;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnswerDTO;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnswerResponseDTO;
 
 import java.util.function.Function;
 
 import static org.wso2.carbon.identity.rest.api.user.challenge.v1.core.UserChallengeService.WSO2_CLAIM_DIALECT;
 
-public class UserChallengeAnswerToExternal implements Function<UserChallengeAnswer, UserChallengeAnswerDTO> {
+public class UserChallengeAnswerToExternal implements Function<UserChallengeAnswer, UserChallengeAnswerResponseDTO> {
 
     @Override
-    public UserChallengeAnswerDTO apply(UserChallengeAnswer userChallengeAnswer) {
-        UserChallengeAnswerDTO userChallengeAnswerDTO = new UserChallengeAnswerDTO();
+    public UserChallengeAnswerResponseDTO apply(UserChallengeAnswer userChallengeAnswer) {
+        UserChallengeAnswerResponseDTO userChallengeAnswerDTO = new UserChallengeAnswerResponseDTO();
         userChallengeAnswerDTO.setAnswer(userChallengeAnswer.getAnswer());
         userChallengeAnswerDTO.setQuestion(userChallengeAnswer.getQuestion().getQuestion());
         userChallengeAnswerDTO.setQuestionSetId(userChallengeAnswer.getQuestion().getQuestionSetId().split

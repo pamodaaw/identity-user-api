@@ -35,6 +35,7 @@ import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeQuestion
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeQuestionPatchDTO;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeSetDTO;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnswerDTO;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnswerResponseDTO;
 import org.wso2.carbon.user.core.UserStoreConfigConstants;
 
 import javax.ws.rs.WebApplicationException;
@@ -121,7 +122,7 @@ public class UserChallengeService {
         return true;
     }
 
-    public boolean updateChallengeAnswerOfUser(String userId, String challengeSetId, ChallengeAnswerDTO
+    public boolean updateChallengeAnswerOfUser(String userId, String challengeSetId, UserChallengeAnswerDTO
             challengeAnswer) {
 
         //TODO This will override all the questions, need to implement backend to update only one
@@ -146,7 +147,7 @@ public class UserChallengeService {
         return true;
     }
 
-    public boolean addChallengeAnswerOfUser(String userId, String challengeSetId, ChallengeAnswerDTO
+    public boolean addChallengeAnswerOfUser(String userId, String challengeSetId, UserChallengeAnswerDTO
             challengeAnswer) {
 
         //TODO This will override all the questions, need to implement backend to update only one
@@ -159,7 +160,7 @@ public class UserChallengeService {
                                 " challenge. Hence, Unable to add new Answer.").build());
             }
             UserChallengeAnswer answer = new UserChallengeAnswer(
-                    createChallenceQuestion(challengeAnswer.getQuestionSetId(), challengeAnswer.getChallengeQuestion()),
+                    createChallenceQuestion(challengeSetId, challengeAnswer.getChallengeQuestion()),
                     challengeAnswer.getAnswer());
             questionManager.setChallengeOfUser(user, answer);
         } catch (IdentityRecoveryException e) {
@@ -171,7 +172,7 @@ public class UserChallengeService {
         return true;
     }
 
-    public List<UserChallengeAnswerDTO> getChallengeAnswersOfUser(String userId) {
+    public List<UserChallengeAnswerResponseDTO> getChallengeAnswersOfUser(String userId) {
 
         User user = extractUser(userId);
         try {
@@ -292,7 +293,7 @@ public class UserChallengeService {
         return user;
     }
 
-    private List<UserChallengeAnswerDTO> getUserChallengeAnswerDTOsOfUser(User user) throws IdentityRecoveryException {
+    private List<UserChallengeAnswerResponseDTO> getUserChallengeAnswerDTOsOfUser(User user) throws IdentityRecoveryException {
         UserChallengeAnswer[] answers = questionManager.getChallengeAnswersOfUser(user);
         return Arrays.stream(answers).map(new UserChallengeAnswerToExternal()).collect(Collectors.toList());
     }

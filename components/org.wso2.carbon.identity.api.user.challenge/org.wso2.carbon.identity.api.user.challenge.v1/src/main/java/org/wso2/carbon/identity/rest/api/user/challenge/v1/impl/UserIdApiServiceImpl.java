@@ -23,6 +23,7 @@ import org.wso2.carbon.identity.rest.api.user.challenge.v1.ApiResponseMessage;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.UserIdApiService;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.core.UserChallengeService;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeAnswerDTO;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnswerDTO;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -34,7 +35,7 @@ public class UserIdApiServiceImpl extends UserIdApiService {
 
 
     @Override
-    public Response addChallengeAnswerOfAUser(String challengeSetId, String userId, ChallengeAnswerDTO challengeAnswer) {
+    public Response addChallengeAnswerOfAUser(String challengeSetId, String userId, UserChallengeAnswerDTO challengeAnswer) {
         return Response.ok().entity(challengeService.addChallengeAnswerOfUser(userId, challengeSetId, challengeAnswer))
                 .build();
     }
@@ -65,7 +66,7 @@ public class UserIdApiServiceImpl extends UserIdApiService {
         return Response.ok().entity(challengeService.getChallengesForUser(userId, offset, limit)).build();
     }
     @Override
-    public Response updateChallengeAnswerOfAUser(String challengeSetId,String userId,ChallengeAnswerDTO challengeAnswer){
+    public Response updateChallengeAnswerOfAUser(String challengeSetId,String userId,UserChallengeAnswerDTO challengeAnswer){
         // do some magic!
         return Response.ok().entity(challengeService.updateChallengeAnswerOfUser(userId, challengeSetId,
                 challengeAnswer)).build();

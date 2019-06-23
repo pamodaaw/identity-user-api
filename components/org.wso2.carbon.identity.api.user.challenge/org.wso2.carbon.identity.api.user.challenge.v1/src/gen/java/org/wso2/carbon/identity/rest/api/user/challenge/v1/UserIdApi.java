@@ -7,10 +7,11 @@ import org.wso2.carbon.identity.rest.api.user.challenge.v1.factories.UserIdApiSe
 
 import io.swagger.annotations.ApiParam;
 
-import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeAnswerDTO;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ErrorDTO;
-import java.util.List;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnswerDTO;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeAnswerDTO;
+import java.util.List;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnswerResponseDTO;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeSetDTO;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class UserIdApi  {
 
     public Response addChallengeAnswerOfAUser(@ApiParam(value = "Challenge Question set Id",required=true ) @PathParam("challenge-set-id")  String challengeSetId,
     @ApiParam(value = "username of the user",required=true ) @PathParam("user-id")  String userId,
-    @ApiParam(value = "challenge-question with answer"  ) ChallengeAnswerDTO challengeAnswer)
+    @ApiParam(value = "challenge-question with answer"  ) UserChallengeAnswerDTO challengeAnswer)
     {
     return delegate.addChallengeAnswerOfAUser(challengeSetId,userId,challengeAnswer);
     }
@@ -119,7 +120,7 @@ public class UserIdApi  {
     @Path("/challenge-answers")
     
     
-    @io.swagger.annotations.ApiOperation(value = "get user's challenge answers", notes = "Get answered challenges in the system for a specific user.\n", response = UserChallengeAnswerDTO.class, responseContainer = "List")
+    @io.swagger.annotations.ApiOperation(value = "get user's challenge answers", notes = "Get answered challenges in the system for a specific user.\n", response = UserChallengeAnswerResponseDTO.class, responseContainer = "List")
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "search results matching criteria"),
         
@@ -173,7 +174,7 @@ public class UserIdApi  {
 
     public Response updateChallengeAnswerOfAUser(@ApiParam(value = "Challenge Question set Id",required=true ) @PathParam("challenge-set-id")  String challengeSetId,
     @ApiParam(value = "username of the user",required=true ) @PathParam("user-id")  String userId,
-    @ApiParam(value = "challenge-question with answer"  ) ChallengeAnswerDTO challengeAnswer)
+    @ApiParam(value = "challenge-question with answer"  ) UserChallengeAnswerDTO challengeAnswer)
     {
     return delegate.updateChallengeAnswerOfAUser(challengeSetId,userId,challengeAnswer);
     }
