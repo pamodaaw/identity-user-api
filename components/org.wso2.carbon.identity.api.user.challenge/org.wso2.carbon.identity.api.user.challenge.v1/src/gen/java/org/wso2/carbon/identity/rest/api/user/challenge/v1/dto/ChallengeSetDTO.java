@@ -2,6 +2,7 @@ package org.wso2.carbon.identity.rest.api.user.challenge.v1.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeQuestionDTO;
 
 import io.swagger.annotations.*;
 import com.fasterxml.jackson.annotation.*;

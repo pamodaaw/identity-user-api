@@ -1,5 +1,7 @@
 package org.wso2.carbon.identity.rest.api.user.challenge.v1.dto;
 
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeQuestionDTO;
+
 import io.swagger.annotations.*;
 import com.fasterxml.jackson.annotation.*;
 

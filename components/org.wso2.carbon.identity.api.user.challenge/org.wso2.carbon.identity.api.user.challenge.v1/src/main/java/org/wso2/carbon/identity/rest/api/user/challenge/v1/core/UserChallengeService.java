@@ -134,6 +134,31 @@ public class UserChallengeService {
                                 "question. Hence, Unable to update it").build());
             }
             UserChallengeAnswer answer = new UserChallengeAnswer(
+                    createChallenceQuestion(challengeSetId, challengeAnswer.getChallengeQuestion()),
+                    challengeAnswer.getAnswer());
+            questionManager.setChallengeOfUser(user, answer);
+        } catch (IdentityRecoveryException e) {
+            //TODO handle and throw correct error
+            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, new Error.Builder().withCode("somecodee")
+                    .withMessage("some message").withDescription("some description").build());
+
+        }
+        return true;
+    }
+
+    public boolean addChallengeAnswerOfUser(String userId, String challengeSetId, ChallengeAnswerDTO
+            challengeAnswer) {
+
+        //TODO This will override all the questions, need to implement backend to update only one
+        User user = extractUser(userId);
+        try {
+            List<String> answeredList = questionManager.getChallengeQuestionUris(user);
+            if (!answeredList.isEmpty() && answeredList.contains(WSO2_CLAIM_DIALECT + challengeSetId)) {
+                throw new APIError(Response.Status.CONFLICT, new Error.Builder().withCode("somecodee")
+                        .withMessage("Challenge Answers Already set").withDescription("User has already answered this" +
+                                " challenge. Hence, Unable to add new Answer.").build());
+            }
+            UserChallengeAnswer answer = new UserChallengeAnswer(
                     createChallenceQuestion(challengeAnswer.getQuestionSetId(), challengeAnswer.getChallengeQuestion()),
                     challengeAnswer.getAnswer());
             questionManager.setChallengeOfUser(user, answer);

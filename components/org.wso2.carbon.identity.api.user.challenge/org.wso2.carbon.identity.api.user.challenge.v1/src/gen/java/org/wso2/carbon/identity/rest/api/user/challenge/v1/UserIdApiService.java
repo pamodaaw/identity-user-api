@@ -1,12 +1,23 @@
 package org.wso2.carbon.identity.rest.api.user.challenge.v1;
 
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.*;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.*;
+
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeAnswerDTO;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ErrorDTO;
+import java.util.List;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnswerDTO;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeSetDTO;
 
 import java.util.List;
+
+import java.io.InputStream;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 
 import javax.ws.rs.core.Response;
 
 public abstract class UserIdApiService {
+    public abstract Response addChallengeAnswerOfAUser(String challengeSetId,String userId,ChallengeAnswerDTO challengeAnswer);
     public abstract Response addChallengeAnswersOfAUser(String userId,List<ChallengeAnswerDTO> challengeAnswer);
     public abstract Response deleteChallengeAnswerOfAUser(String challengeSetId,String userId);
     public abstract Response deleteChallengeAnswersOfAUser(String userId);

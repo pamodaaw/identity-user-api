@@ -34,6 +34,12 @@ public class UserIdApiServiceImpl extends UserIdApiService {
 
 
     @Override
+    public Response addChallengeAnswerOfAUser(String challengeSetId, String userId, ChallengeAnswerDTO challengeAnswer) {
+        return Response.ok().entity(challengeService.addChallengeAnswerOfUser(userId, challengeSetId, challengeAnswer))
+                .build();
+    }
+
+    @Override
     public Response addChallengeAnswersOfAUser(String userId,List<ChallengeAnswerDTO> challengeAnswer){
         // do some magic!
         return Response.ok().entity(challengeService.setChallengeAnswersOfUser(userId, challengeAnswer)).build();
@@ -61,7 +67,8 @@ public class UserIdApiServiceImpl extends UserIdApiService {
     @Override
     public Response updateChallengeAnswerOfAUser(String challengeSetId,String userId,ChallengeAnswerDTO challengeAnswer){
         // do some magic!
-        return Response.ok().entity(challengeService.updateChallengeAnswerOfUser(userId, challengeSetId, challengeAnswer)).build();
+        return Response.ok().entity(challengeService.updateChallengeAnswerOfUser(userId, challengeSetId,
+                challengeAnswer)).build();
     }
     @Override
     public Response updateChallengeAnswersOfAUser(String userId,List<ChallengeAnswerDTO> challengeAnswers){

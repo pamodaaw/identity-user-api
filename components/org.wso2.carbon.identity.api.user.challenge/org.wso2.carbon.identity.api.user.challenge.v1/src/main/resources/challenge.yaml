@@ -165,13 +165,41 @@ paths:
         500:
           $ref: '#/responses/ServerError'
   /{user-id}/challenge-answers/{challenge-set-id}:
-    put:
+    post:
       tags:
         - developement
       summary: "answers a new challenge question"
+      operationId: addChallengeAnswerOfAUser
+      description: |
+        Update new challenge question answer to the system for a specific user.
+      parameters:
+        - $ref: '#/parameters/questionSetIdPathParam'
+        - $ref: '#/parameters/usernamePathParams'
+        - in: body
+          name: challengeAnswer
+          description: challenge-question with answer
+          schema:
+            $ref: '#/definitions/ChallengeAnswer'
+      responses:
+        200:
+          $ref: '#/responses/OK'
+        400:
+          $ref: '#/responses/InvalidInput'
+        401:
+          $ref: '#/responses/Unauthorized'
+        404:
+          $ref: '#/responses/NotFound'
+        409:
+          $ref: '#/responses/Conflict'
+        500:
+          $ref: '#/responses/ServerError'
+    put:
+      tags:
+        - developement
+      summary: "update answer of a challenge question"
       operationId: updateChallengeAnswerOfAUser
       description: |
-        Adds a new challenge question answer to the system for a specific user.
+        Update challenge question answer of a specific user.
       parameters:
         - $ref: '#/parameters/questionSetIdPathParam'
         - $ref: '#/parameters/usernamePathParams'
@@ -314,13 +342,41 @@ paths:
         500:
           $ref: '#/responses/ServerError'
   /me/challenge-answers/{challenge-set-id}:
+    post:
+      tags:
+        - developement
+      summary: "answers a new challenge question"
+      operationId: addChallengeAnswerOfLoggedInUser
+      description: |
+        Adds a new challenge question answer to the system for loggedin user.
+      parameters:
+        - $ref: '#/parameters/questionSetIdPathParam'
+        - $ref: '#/parameters/usernamePathParams'
+        - in: body
+          name: challengeAnswer
+          description: challenge-question with answer
+          schema:
+            $ref: '#/definitions/ChallengeAnswer'
+      responses:
+        200:
+          $ref: '#/responses/OK'
+        400:
+          $ref: '#/responses/InvalidInput'
+        401:
+          $ref: '#/responses/Unauthorized'
+        404:
+          $ref: '#/responses/NotFound'
+        409:
+          $ref: '#/responses/Conflict'
+        500:
+          $ref: '#/responses/ServerError'
     put:
       tags:
         - developement
       summary: "answers a new challenge question"
       operationId: updateChallengeAnswerOfLoggedInUser
       description: |
-        Adds a new challenge question answer to the system for authenticated user.
+        Update challenge answer in a specific challenge for authenticated user.
       parameters:
         - $ref: '#/parameters/questionSetIdPathParam'
         - $ref: '#/parameters/usernamePathParams'

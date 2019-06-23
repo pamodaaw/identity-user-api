@@ -1,15 +1,23 @@
 package org.wso2.carbon.identity.rest.api.user.challenge.v1;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.*;
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.UserIdApiService;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.factories.UserIdApiServiceFactory;
 
 import io.swagger.annotations.ApiParam;
 
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeAnswerDTO;
-
+import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ErrorDTO;
 import java.util.List;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.UserChallengeAnswerDTO;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeSetDTO;
+
+import java.util.List;
+
+import java.io.InputStream;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
@@ -21,8 +29,32 @@ import javax.ws.rs.*;
 public class UserIdApi  {
 
    @Autowired
-   private  UserIdApiService delegate ;
+   private UserIdApiService delegate;
 
+    @POST
+    @Path("/challenge-answers/{challenge-set-id}")
+    
+    
+    @io.swagger.annotations.ApiOperation(value = "answers a new challenge question", notes = "Update new challenge question answer to the system for a specific user.\n", response = void.class)
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK"),
+        
+        @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid input request"),
+        
+        @io.swagger.annotations.ApiResponse(code = 401, message = "Unauthorized"),
+        
+        @io.swagger.annotations.ApiResponse(code = 404, message = "The specified resource is not found"),
+        
+        @io.swagger.annotations.ApiResponse(code = 409, message = "Element Already Exists"),
+        
+        @io.swagger.annotations.ApiResponse(code = 500, message = "Internal Server Error") })
+
+    public Response addChallengeAnswerOfAUser(@ApiParam(value = "Challenge Question set Id",required=true ) @PathParam("challenge-set-id")  String challengeSetId,
+    @ApiParam(value = "username of the user",required=true ) @PathParam("user-id")  String userId,
+    @ApiParam(value = "challenge-question with answer"  ) ChallengeAnswerDTO challengeAnswer)
+    {
+    return delegate.addChallengeAnswerOfAUser(challengeSetId,userId,challengeAnswer);
+    }
     @POST
     @Path("/challenge-answers")
     
@@ -127,7 +159,7 @@ public class UserIdApi  {
     @Path("/challenge-answers/{challenge-set-id}")
     
     
-    @io.swagger.annotations.ApiOperation(value = "answers a new challenge question", notes = "Adds a new challenge question answer to the system for a specific user.\n", response = void.class)
+    @io.swagger.annotations.ApiOperation(value = "update answer of a challenge question", notes = "Update challenge question answer of a specific user.\n", response = void.class)
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK"),
         

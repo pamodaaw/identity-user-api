@@ -11,6 +11,11 @@ import javax.ws.rs.core.Response;
 
 public class MeApiServiceImpl extends MeApiService {
     @Override
+    public Response addChallengeAnswerOfLoggedInUser(String challengeSetId, String userId, ChallengeAnswerDTO challengeAnswer) {
+        return null;
+    }
+
+    @Override
     public Response addChallengeAnswersForLoggedInUser(String userId,List<ChallengeAnswerDTO> challengeAnswer){
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
