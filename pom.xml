@@ -192,6 +192,16 @@
                 <version>${identity.governance.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.governance</groupId>
+                <artifactId>org.wso2.carbon.identity.user.session</artifactId>
+                <version>${identity.governance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
+                <version>${carbon.identity.framework.version}</version>
+            </dependency>
             <!--<dependency>-->
             <!--<groupId>org.wso2.carbon.identity.framework</groupId>-->
             <!--<artifactId>org.wso2.carbon.identity.application.common</artifactId>-->
@@ -300,12 +310,13 @@
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
         <org.apache.felix.annotations.version>1.2.4</org.apache.felix.annotations.version>
         <identity.governance.version>1.1.69-SNAPSHOT</identity.governance.version>
-        <carbon.identity.framework.version>5.12.401</carbon.identity.framework.version>
+        <carbon.identity.framework.version>5.13.7-SNAPSHOT</carbon.identity.framework.version>
     </properties>
 
     <modules>
         <module>components/org.wso2.carbon.identity.api.user.association</module>
         <module>components/org.wso2.carbon.identity.api.user.challenge</module>
+        <module>components/org.wso2.carbon.identity.api.user.session</module>
     </modules>
 
 </project>
