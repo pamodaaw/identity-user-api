@@ -306,6 +306,7 @@
     <modules>
         <module>components/org.wso2.carbon.identity.api.user.association</module>
         <module>components/org.wso2.carbon.identity.api.user.challenge</module>
+        <module>components/org.wso2.carbon.identity.api.user.common</module>
     </modules>
 
 </project>

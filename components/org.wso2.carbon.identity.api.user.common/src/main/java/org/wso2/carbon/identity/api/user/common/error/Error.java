@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.rest.api.user.challenge.v1.core;
+package org.wso2.carbon.identity.api.user.common.error;
 
-import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ErrorDTO;
+
+import org.wso2.carbon.identity.api.user.common.Constants;
 
 public class Error extends ErrorDTO {
 
@@ -24,6 +25,7 @@ public class Error extends ErrorDTO {
         private String code;
         private String message;
         private String description;
+        private String ref;
 
         public Builder() {
 
@@ -46,11 +48,24 @@ public class Error extends ErrorDTO {
             return this;
         }
 
+        public Builder withCorrelation(String ref) {
+            this.ref = ref;
+            return this;
+        }
+
+        public Builder withError(Constants.ErrorMessages error) {
+            this.code = error.getCode();
+            this.message = error.getMessage();
+            this.description = error.getDescription();
+            return this;
+        }
+
         public Error build() {
             Error error = new Error();
             error.setCode(this.code);
             error.setMessage(this.message);
             error.setDescription(this.description);
+            error.setRef(this.ref);
             return error;
         }
     }

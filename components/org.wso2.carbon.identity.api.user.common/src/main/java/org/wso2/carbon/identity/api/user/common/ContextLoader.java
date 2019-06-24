@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.api.user.challenge.common;
+package org.wso2.carbon.identity.api.user.common;
 
-public class Constants {
-    public static final String OPERATION_ADD = "ADD";
-    public static final String TENANT_NAME_FROM_CONTEXT = "TenantNameFromContext";
+import org.wso2.carbon.base.MultitenantConstants;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
 
+public class ContextLoader {
+
+    public static String getTenantDomainFromContext() {
+
+        String tenantDomain = MultitenantConstants.SUPER_TENANT_DOMAIN_NAME;
+        if (IdentityUtil.threadLocalProperties.get().get(Constants.TENANT_NAME_FROM_CONTEXT) != null) {
+            tenantDomain = (String) IdentityUtil.threadLocalProperties.get().get(Constants.TENANT_NAME_FROM_CONTEXT);
+        }
+        return tenantDomain;
+    }
 }
