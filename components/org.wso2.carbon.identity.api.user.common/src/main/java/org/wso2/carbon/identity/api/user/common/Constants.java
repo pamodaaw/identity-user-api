@@ -19,6 +19,23 @@ package org.wso2.carbon.identity.api.user.common;
 public class Constants {
     public static final String OPERATION_ADD = "ADD";
     public static final String TENANT_NAME_FROM_CONTEXT = "TenantNameFromContext";
+    public static final String ERROR_CODE_DELIMITER = "-";
+    public static final String CORRELATION_ID_MDC = "Correlation-ID";
+
+    public enum ErrorPrefix {
+
+        CHALLENGE_QUESTION_PREFIX("CQM");
+
+        private final String prefix;
+
+        ErrorPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+    }
 
     public enum ErrorMessages {
 

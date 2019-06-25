@@ -71,9 +71,8 @@ public class UserIdtoUser implements Function<String[],User> {
 
             return user;
         } catch (Exception e){
-            String correlationID = UUID.randomUUID().toString();
             throw new APIError(Response.Status.BAD_REQUEST, new ErrorResponse.Builder().withError
-                    (ERROR_CODE_INVALID_USERNAME).withCorrelation(correlationID).build(log, e, "Invalid userId: " +
+                    (ERROR_CODE_INVALID_USERNAME).build(log, e, "Invalid userId: " +
                     userId));
         }
     }

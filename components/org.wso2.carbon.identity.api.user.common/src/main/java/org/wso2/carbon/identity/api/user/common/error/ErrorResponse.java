@@ -17,11 +17,13 @@
 package org.wso2.carbon.identity.api.user.common.error;
 
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
+import org.apache.log4j.MDC;
 import org.wso2.carbon.identity.api.user.common.Constants;
 
 import java.util.UUID;
+
+import static org.wso2.carbon.identity.api.user.common.Constants.CORRELATION_ID_MDC;
 
 public class ErrorResponse extends ErrorDTO {
 
@@ -52,11 +54,6 @@ public class ErrorResponse extends ErrorDTO {
             return this;
         }
 
-        public Builder withCorrelation(String ref) {
-            this.ref = ref;
-            return this;
-        }
-
         public Builder withError(Constants.ErrorMessages error) {
             this.code = error.getCode();
             this.message = error.getMessage();
@@ -75,17 +72,28 @@ public class ErrorResponse extends ErrorDTO {
 
         public ErrorResponse build(Log log, Exception e, String message) {
             ErrorResponse error = build();
-            String errorMsg = String.format("correlationID: %s | errorCode: %s | message: %s", error.getRef(), error
-                    .getCode(), message);
-            log.error(errorMsg , e);
+            String errorMessageFormat = "errorCode: %s | message: %s";
+            String errorMsg = String.format(errorMessageFormat, error.getCode(), message);
+            if (!isCorrelationIDPresent()) {
+                errorMsg = String.format("correlationID: %s | " + errorMsg, error.getRef());
+            }
+            log.error(errorMsg, e);
             return error;
         }
 
         private String getCorrelation() {
-            if (StringUtils.isEmpty(this.ref)) {
+
+            if (isCorrelationIDPresent()) {
+                this.ref = MDC.get(CORRELATION_ID_MDC).toString();
+            } else {
                 this.ref = UUID.randomUUID().toString();
+
             }
             return this.ref;
+        }
+
+        private boolean isCorrelationIDPresent() {
+            return MDC.get(CORRELATION_ID_MDC) != null;
         }
     }
 }

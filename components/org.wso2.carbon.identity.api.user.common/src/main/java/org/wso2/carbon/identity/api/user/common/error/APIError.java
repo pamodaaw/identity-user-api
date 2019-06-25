@@ -25,7 +25,7 @@ public class APIError extends WebApplicationException {
 
     private String message;
 
-    public APIError(Response.Status status , Object errorResponse) {
+    public APIError(Response.Status status , ErrorDTO errorResponse) {
         super(Response.status(status)
                 .entity(errorResponse)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -33,7 +33,7 @@ public class APIError extends WebApplicationException {
         this.message = status.getReasonPhrase();
     }
 
-    public APIError(Response.Status status, String message, Object errorResponse) {
+    public APIError(Response.Status status, String message, ErrorDTO errorResponse) {
         this(status, errorResponse);
         this.message = message;
     }

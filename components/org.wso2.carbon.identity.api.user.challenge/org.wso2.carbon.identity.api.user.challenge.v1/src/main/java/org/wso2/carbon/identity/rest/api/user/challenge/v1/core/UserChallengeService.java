@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.wso2.carbon.identity.api.user.common.Constants.ERROR_CODE_DELIMITER;
 import static org.wso2.carbon.identity.api.user.common.Constants.ErrorMessages.ERROR_CODE_ERROR_DELETING_CHALLENGE_ANSWERS_OF_USER;
 import static org.wso2.carbon.identity.api.user.common.Constants.ErrorMessages.ERROR_CODE_ERROR_DELETING_CHALLENGE_ANSWER_OF_USER;
 import static org.wso2.carbon.identity.api.user.common.Constants.ErrorMessages.ERROR_CODE_ERROR_RETRIVING_CHALLENGES_FOR_USER;
@@ -56,6 +57,7 @@ import static org.wso2.carbon.identity.api.user.common.Constants.ErrorMessages.E
 import static org.wso2.carbon.identity.api.user.common.Constants.ErrorMessages.ERROR_CODE_USER_ALREADY_ANSWERED_CHALLENGES;
 import static org.wso2.carbon.identity.api.user.common.Constants.ErrorMessages.ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGE;
 import static org.wso2.carbon.identity.api.user.common.Constants.ErrorMessages.ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGES;
+import static org.wso2.carbon.identity.api.user.common.Constants.ErrorPrefix.CHALLENGE_QUESTION_PREFIX;
 
 public class UserChallengeService {
 
@@ -232,7 +234,10 @@ public class UserChallengeService {
         ErrorResponse errorResponse = new ErrorResponse.Builder().withError(errorEnum).build(log, e, e.getMessage());
 
         if (e.getErrorCode() != null) {
-            errorResponse.setCode(e.getErrorCode());
+            String errorcode =  e.getErrorCode();
+            errorcode = errorcode.contains(ERROR_CODE_DELIMITER) ? errorcode : CHALLENGE_QUESTION_PREFIX.getPrefix() +
+                    ERROR_CODE_DELIMITER + errorcode;
+            errorResponse.setCode(errorcode);
         }
         if (e instanceof IdentityRecoveryClientException) {
             errorResponse.setDescription(e.getMessage());

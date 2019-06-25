@@ -18,41 +18,4 @@ package org.wso2.carbon.identity.api.user.challenge.common;
 
 public class Constant {
 
-//    public enum ErrorMessages {
-//
-//        ERROR_CHALLENGE_ANSWER_MISSING("20051", "Challenge question missing in the user challenge " +
-//                "answer.", ""),
-//        ERROR_CODE_INVALID_UDERNAME("10001", "Invalid username provided", ""),
-//        ERROR_CODE_UNABLE_TO_GET_USER_CHALLLENGES("10002","Unable to get user challenges." , "Server Encountered an " +
-//                "error while retrieving challenges for user.");
-//
-//
-//        private final String code;
-//        private final String message;
-//        private final String description;
-//
-//        ErrorMessages(String code, String message, String description) {
-//            this.code = code;
-//            this.message = message;
-//            this.description = description;
-//        }
-//
-//        public String getCode() {
-//            return code;
-//        }
-//
-//        public String getMessage() {
-//            return message;
-//        }
-//
-//        public String getDescription() {
-//            return description;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return code + " - " + message;
-//        }
-//
-//    }
 }
