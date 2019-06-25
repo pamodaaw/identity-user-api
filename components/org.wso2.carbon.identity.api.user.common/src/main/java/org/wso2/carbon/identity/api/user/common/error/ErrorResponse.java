@@ -17,9 +17,13 @@
 package org.wso2.carbon.identity.api.user.common.error;
 
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
 import org.wso2.carbon.identity.api.user.common.Constants;
 
-public class Error extends ErrorDTO {
+import java.util.UUID;
+
+public class ErrorResponse extends ErrorDTO {
 
     public static class Builder {
         private String code;
@@ -60,13 +64,28 @@ public class Error extends ErrorDTO {
             return this;
         }
 
-        public Error build() {
-            Error error = new Error();
+        public ErrorResponse build() {
+            ErrorResponse error = new ErrorResponse();
             error.setCode(this.code);
             error.setMessage(this.message);
             error.setDescription(this.description);
-            error.setRef(this.ref);
+            error.setRef(getCorrelation());
             return error;
+        }
+
+        public ErrorResponse build(Log log, Exception e, String message) {
+            ErrorResponse error = build();
+            String errorMsg = String.format("correlationID: %s | errorCode: %s | message: %s", error.getRef(), error
+                    .getCode(), message);
+            log.error(errorMsg , e);
+            return error;
+        }
+
+        private String getCorrelation() {
+            if (StringUtils.isEmpty(this.ref)) {
+                this.ref = UUID.randomUUID().toString();
+            }
+            return this.ref;
         }
     }
 }

@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.api.user.common.error.APIError;
-import org.wso2.carbon.identity.api.user.common.error.Error;
+import org.wso2.carbon.identity.api.user.common.error.ErrorResponse;
 import org.wso2.carbon.identity.application.common.model.User;
 import org.wso2.carbon.user.core.UserStoreConfigConstants;
 
@@ -47,8 +47,7 @@ public class UserIdtoUser implements Function<String[],User> {
             String decodedUsername = new String(Base64.getDecoder().decode(userId));
 
             if (StringUtils.isBlank(userId)) {
-                //TODO throw correct error
-                throw new WebApplicationException();
+                throw new WebApplicationException("UserID is empty.");
             }
             String[] strComponent = decodedUsername.split("/");
 
@@ -61,9 +60,8 @@ public class UserIdtoUser implements Function<String[],User> {
                 realm = strComponent[0];
                 username = strComponent[1];
             } else {
-                //TODO throw correct error
-                throw new APIError(Response.Status.BAD_REQUEST, new Error.Builder().withMessage("Provided UserID is " +
-                        "not in the correct format."));
+                throw new WebApplicationException("Provided UserID is " +
+                        "not in the correct format.");
             }
 
             User user = new User();
@@ -72,11 +70,11 @@ public class UserIdtoUser implements Function<String[],User> {
             user.setTenantDomain(tenantDomain);
 
             return user;
-        } catch (Throwable e){
+        } catch (Exception e){
             String correlationID = UUID.randomUUID().toString();
-            log.error("correlationID: " + correlationID + " | userID: " + userId, e);
-            throw new APIError(Response.Status.BAD_REQUEST, new Error.Builder().withError
-                    (ERROR_CODE_INVALID_USERNAME).withCorrelation(correlationID).build());
+            throw new APIError(Response.Status.BAD_REQUEST, new ErrorResponse.Builder().withError
+                    (ERROR_CODE_INVALID_USERNAME).withCorrelation(correlationID).build(log, e, "Invalid userId: " +
+                    userId));
         }
     }
 }

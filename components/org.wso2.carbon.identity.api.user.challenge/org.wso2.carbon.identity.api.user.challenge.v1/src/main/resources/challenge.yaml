@@ -592,4 +592,4 @@ responses:
     description: Item Deleted
 
 host: localhost:9443
-basePath: /api/users/v1.0
+basePath: /api/users/v1

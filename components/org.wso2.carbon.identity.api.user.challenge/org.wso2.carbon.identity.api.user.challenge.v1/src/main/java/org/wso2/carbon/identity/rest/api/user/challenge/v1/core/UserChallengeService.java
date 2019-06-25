@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.api.user.common.Constants;
 import org.wso2.carbon.identity.api.user.common.ContextLoader;
 import org.wso2.carbon.identity.api.user.common.error.APIError;
-import org.wso2.carbon.identity.api.user.common.error.Error;
+import org.wso2.carbon.identity.api.user.common.error.ErrorResponse;
 import org.wso2.carbon.identity.application.common.model.User;
 import org.wso2.carbon.identity.recovery.ChallengeQuestionManager;
 import org.wso2.carbon.identity.recovery.IdentityRecoveryClientException;
@@ -41,7 +41,6 @@ import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -59,6 +58,7 @@ import static org.wso2.carbon.identity.api.user.common.Constants.ErrorMessages.E
 import static org.wso2.carbon.identity.api.user.common.Constants.ErrorMessages.ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGES;
 
 public class UserChallengeService {
+
     private static final Log log = LogFactory.getLog(UserChallengeService.class);
     private static ChallengeQuestionManager questionManager = ChallengeQuestionManager.getInstance();
     public static final String WSO2_CLAIM_DIALECT = "http://wso2.org/claims/";
@@ -81,7 +81,7 @@ public class UserChallengeService {
         try {
             List<String> answeredList = questionManager.getChallengeQuestionUris(user);
             if (answeredList.size() > 0) {
-                handleException(Response.Status.CONFLICT, ERROR_CODE_USER_ALREADY_ANSWERED_CHALLENGES);
+                handleError(Response.Status.CONFLICT, ERROR_CODE_USER_ALREADY_ANSWERED_CHALLENGES);
             }
             questionManager.setChallengesOfUser(user, answers.toArray(new UserChallengeAnswer[answers.size()]));
         } catch (IdentityRecoveryException e) {
@@ -97,7 +97,7 @@ public class UserChallengeService {
         try {
             List<String> answeredList = questionManager.getChallengeQuestionUris(user);
             if (answeredList.size() < 1) {
-                handleException(Response.Status.NOT_FOUND, ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGES);
+                handleError(Response.Status.NOT_FOUND, ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGES);
             }
             questionManager.setChallengesOfUser(user, answers.toArray(new UserChallengeAnswer[answers.size()]));
 
@@ -116,7 +116,7 @@ public class UserChallengeService {
         try {
             List<String> answeredList = questionManager.getChallengeQuestionUris(user);
             if (answeredList.isEmpty() || !answeredList.contains(WSO2_CLAIM_DIALECT + challengeSetId)) {
-                handleException(Response.Status.NOT_FOUND, ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGE);
+                handleError(Response.Status.NOT_FOUND, ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGE);
             }
             UserChallengeAnswer answer = new UserChallengeAnswer(
                     createChallenceQuestion(challengeSetId, challengeAnswer.getChallengeQuestion()),
@@ -137,7 +137,7 @@ public class UserChallengeService {
         try {
             List<String> answeredList = questionManager.getChallengeQuestionUris(user);
             if (!answeredList.isEmpty() && answeredList.contains(WSO2_CLAIM_DIALECT + challengeSetId)) {
-                handleException(Response.Status.CONFLICT, ERROR_CODE_USER_ALREADY_ANSWERED_CHALLENGE);
+                handleError(Response.Status.CONFLICT, ERROR_CODE_USER_ALREADY_ANSWERED_CHALLENGE);
             }
             UserChallengeAnswer answer = new UserChallengeAnswer(
                     createChallenceQuestion(challengeSetId, challengeAnswer.getChallengeQuestion()),
@@ -186,7 +186,6 @@ public class UserChallengeService {
     }
 
 
-
     private List<UserChallengeAnswerResponseDTO> getUserChallengeAnswerDTOsOfUser(User user) throws IdentityRecoveryException {
         UserChallengeAnswer[] answers = questionManager.getChallengeAnswersOfUser(user);
         return Arrays.stream(answers).map(new UserChallengeAnswerToExternal()).collect(Collectors.toList());
@@ -229,29 +228,24 @@ public class UserChallengeService {
                 .collect(groupingBy(question -> question.getQuestionSetId().split(WSO2_CLAIM_DIALECT)[1]));
     }
 
-    private void handleIdentityRecoveryException(IdentityRecoveryException e, Error error) {
-        String correlationId = UUID.randomUUID().toString();
-        log.error("correlationId: " + correlationId + " | errorCode:" + e.getErrorCode() + " - " + error
-                .getDescription(), e);
-        error.setRef(correlationId);
+    private void handleIdentityRecoveryException(IdentityRecoveryException e, Constants.ErrorMessages errorEnum) {
+        ErrorResponse errorResponse = new ErrorResponse.Builder().withError(errorEnum).build(log, e, e.getMessage());
+
         if (e.getErrorCode() != null) {
-            error.setCode(e.getErrorCode());
+            errorResponse.setCode(e.getErrorCode());
         }
         if (e instanceof IdentityRecoveryClientException) {
-            error.setDescription(e.getMessage());
-            throw new APIError(Response.Status.BAD_REQUEST, error);
+            errorResponse.setDescription(e.getMessage());
+            Response.Status status = Response.Status.fromStatusCode(((IdentityRecoveryClientException) e)
+                    .getStatusCode());
+            status = status != null ? status : Response.Status.BAD_REQUEST;
+            throw new APIError(status, errorResponse);
         } else if (e instanceof IdentityRecoveryServerException) {
-            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, error);
+            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, errorResponse);
         }
     }
 
-    private void handleIdentityRecoveryException(IdentityRecoveryException e, Constants.ErrorMessages error) {
-        Error err = new Error.Builder().withError(error).build();
-        handleIdentityRecoveryException(e, err);
-    }
-
-    private void handleException(Response.Status status, Constants.ErrorMessages error) {
-        String correlationId = UUID.randomUUID().toString();
-        throw new APIError(status, new Error.Builder().withError(error).withCorrelation(correlationId).build());
+    private void handleError(Response.Status status, Constants.ErrorMessages error) {
+        throw new APIError(status, new ErrorResponse.Builder().withError(error).build());
     }
 }

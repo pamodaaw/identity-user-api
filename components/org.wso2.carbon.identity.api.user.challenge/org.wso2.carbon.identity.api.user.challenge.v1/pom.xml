@@ -157,7 +157,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.identity.user.api</groupId>
-            <artifactId>org.wso2.carbon.identity.api.user.common.v1</artifactId>
+            <artifactId>org.wso2.carbon.identity.api.user.common</artifactId>
             <scope>provided</scope>
             <version>${project.version}</version>
         </dependency>
