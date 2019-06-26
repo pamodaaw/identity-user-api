@@ -67,7 +67,7 @@ public class ErrorDTO {
     /**
      **/
     @ApiModelProperty(value = "")
-    @JsonProperty("ref")
+    @JsonProperty("traceId")
     public String getRef() {
         return ref;
     }
@@ -85,7 +85,7 @@ public class ErrorDTO {
         sb.append("  code: ").append(code).append("\n");
         sb.append("  message: ").append(message).append("\n");
         sb.append("  description: ").append(description).append("\n");
-        sb.append("  ref: ").append(ref).append("\n");
+        sb.append("  traceId: ").append(ref).append("\n");
         sb.append("}\n");
         return sb.toString();
     }

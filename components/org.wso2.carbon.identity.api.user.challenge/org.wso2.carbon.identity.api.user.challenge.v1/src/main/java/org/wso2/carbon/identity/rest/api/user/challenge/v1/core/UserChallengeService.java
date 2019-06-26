@@ -97,10 +97,7 @@ public class UserChallengeService {
 
         List<UserChallengeAnswer> answers = buildChallengeAnswers(newChallengeAnswers);
         try {
-            List<String> answeredList = questionManager.getChallengeQuestionUris(user);
-            if (answeredList.size() < 1) {
-                handleError(Response.Status.NOT_FOUND, ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGES);
-            }
+            validateUserAnsweredChallenges(user);
             questionManager.setChallengesOfUser(user, answers.toArray(new UserChallengeAnswer[answers.size()]));
 
         } catch (IdentityRecoveryException e) {
@@ -116,10 +113,7 @@ public class UserChallengeService {
 
         //TODO This will override all the questions, need to implement backend to update only one
         try {
-            List<String> answeredList = questionManager.getChallengeQuestionUris(user);
-            if (answeredList.isEmpty() || !answeredList.contains(WSO2_CLAIM_DIALECT + challengeSetId)) {
-                handleError(Response.Status.NOT_FOUND, ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGE);
-            }
+            validateUserAnsweredChallenge(user, challengeSetId);
             UserChallengeAnswer answer = new UserChallengeAnswer(
                     createChallenceQuestion(challengeSetId, challengeAnswer.getChallengeQuestion()),
                     challengeAnswer.getAnswer());
@@ -135,7 +129,6 @@ public class UserChallengeService {
     public boolean addChallengeAnswerOfUser(User user, String challengeSetId, UserChallengeAnswerDTO
             challengeAnswer) {
 
-        //TODO This will override all the questions, need to implement backend to update only one
         try {
             List<String> answeredList = questionManager.getChallengeQuestionUris(user);
             if (!answeredList.isEmpty() && answeredList.contains(WSO2_CLAIM_DIALECT + challengeSetId)) {
@@ -167,6 +160,8 @@ public class UserChallengeService {
     public boolean removeChallengeAnswersOfUser(User user) {
 
         try {
+            validateUserAnsweredChallenges(user);
+
             questionManager.removeChallengeAnswersOfUser(user);
         } catch (IdentityRecoveryException e) {
 
@@ -178,6 +173,7 @@ public class UserChallengeService {
 
     public boolean removeChallengeAnswerOfUser(User user, String challengeSetId) {
         try {
+            validateUserAnsweredChallenge(user, challengeSetId);
             questionManager.removeChallengeAnswerOfUser(user, WSO2_CLAIM_DIALECT + challengeSetId);
         } catch (IdentityRecoveryException e) {
 
@@ -185,6 +181,20 @@ public class UserChallengeService {
             return false;
         }
         return true;
+    }
+
+    private void validateUserAnsweredChallenges(User user) throws IdentityRecoveryException {
+        List<String> answeredList = questionManager.getChallengeQuestionUris(user);
+        if (answeredList.size() < 1) {
+            handleError(Response.Status.NOT_FOUND, ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGES);
+        }
+    }
+
+    private void validateUserAnsweredChallenge(User user, String challengeSetId) throws IdentityRecoveryException {
+        List<String> answeredList = questionManager.getChallengeQuestionUris(user);
+        if (answeredList.isEmpty() || !answeredList.contains(WSO2_CLAIM_DIALECT + challengeSetId)) {
+            handleError(Response.Status.NOT_FOUND, ERROR_CODE_USER_HAS_NOT_ANSWERED_CHALLENGE);
+        }
     }
 
 
@@ -231,23 +241,25 @@ public class UserChallengeService {
     }
 
     private void handleIdentityRecoveryException(IdentityRecoveryException e, Constants.ErrorMessages errorEnum) {
-        ErrorResponse errorResponse = new ErrorResponse.Builder().withError(errorEnum).build(log, e, e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse.Builder().withError(errorEnum).build(log, e, errorEnum
+                .getDescription());
 
         if (e.getErrorCode() != null) {
-            String errorcode =  e.getErrorCode();
-            errorcode = errorcode.contains(ERROR_CODE_DELIMITER) ? errorcode : CHALLENGE_QUESTION_PREFIX.getPrefix() +
-                    ERROR_CODE_DELIMITER + errorcode;
-            errorResponse.setCode(errorcode);
+            String errorCode = e.getErrorCode();
+            errorCode = errorCode.contains(ERROR_CODE_DELIMITER) ? errorCode : CHALLENGE_QUESTION_PREFIX.getPrefix()
+                    + errorCode;
+            errorResponse.setCode(errorCode);
         }
+
+        Response.Status status = Response.Status.fromStatusCode(e.getHttpStatusCode());
+
         if (e instanceof IdentityRecoveryClientException) {
             errorResponse.setDescription(e.getMessage());
-            Response.Status status = Response.Status.fromStatusCode(((IdentityRecoveryClientException) e)
-                    .getStatusCode());
             status = status != null ? status : Response.Status.BAD_REQUEST;
-            throw new APIError(status, errorResponse);
         } else if (e instanceof IdentityRecoveryServerException) {
-            throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, errorResponse);
+            status = status != null ? status : Response.Status.INTERNAL_SERVER_ERROR;
         }
+        throw new APIError(status, errorResponse);
     }
 
     private void handleError(Response.Status status, Constants.ErrorMessages error) {
