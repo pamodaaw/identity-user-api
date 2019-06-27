@@ -19,6 +19,8 @@
 package org.wso2.carbon.identity.rest.api.user.challenge.v1.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.wso2.carbon.identity.api.user.common.ContextLoader;
+import org.wso2.carbon.identity.api.user.common.function.UserIdtoUser;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.ApiResponseMessage;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.UserIdApiService;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.core.UserChallengeService;
@@ -36,45 +38,60 @@ public class UserIdApiServiceImpl extends UserIdApiService {
 
     @Override
     public Response addChallengeAnswerOfAUser(String challengeSetId, String userId, UserChallengeAnswerDTO challengeAnswer) {
-        return Response.ok().entity(challengeService.addChallengeAnswerOfUser(userId, challengeSetId, challengeAnswer))
-                .build();
+
+        challengeService.addChallengeAnswerOfUser(new UserIdtoUser().apply(userId,
+                ContextLoader.getTenantDomainFromContext()), challengeSetId, challengeAnswer);
+        return Response.ok().build();
     }
 
     @Override
     public Response addChallengeAnswersOfAUser(String userId,List<ChallengeAnswerDTO> challengeAnswer){
-        // do some magic!
-        return Response.ok().entity(challengeService.setChallengeAnswersOfUser(userId, challengeAnswer)).build();
+
+        challengeService.setChallengeAnswersOfUser(new UserIdtoUser().apply(userId,
+                ContextLoader.getTenantDomainFromContext()), challengeAnswer);
+        return Response.ok().build();
     }
     @Override
     public Response deleteChallengeAnswerOfAUser(String challengeSetId,String userId){
-        // do some magic!
-        return Response.ok().entity(challengeService.removeChallengeAnswerOfUser(userId, challengeSetId)).build();
+
+        challengeService.removeChallengeAnswerOfUser(new UserIdtoUser().apply(userId,
+                ContextLoader.getTenantDomainFromContext()), challengeSetId);
+        return Response.ok().build();
     }
     @Override
     public Response deleteChallengeAnswersOfAUser(String userId){
-        // do some magic!
-        return Response.ok().entity(challengeService.removeChallengeAnswersOfUser(userId)).build();
+
+        challengeService.removeChallengeAnswersOfUser(new UserIdtoUser().apply(userId,
+                ContextLoader.getTenantDomainFromContext()));
+        return Response.ok().build();
     }
     @Override
     public Response getAnsweredChallengesOfAUser(String userId){
-        // do some magic!
-        return Response.ok().entity(challengeService.getChallengeAnswersOfUser(userId)).build();
+
+        return Response.ok().entity(challengeService.getChallengeAnswersOfUser(new UserIdtoUser().apply(userId,
+                ContextLoader.getTenantDomainFromContext()))).build();
     }
     @Override
     public Response getChallengesForAUser(String userId,Integer offset,Integer limit){
-        // do some magic!
-        return Response.ok().entity(challengeService.getChallengesForUser(userId, offset, limit)).build();
+
+        return Response.ok().entity(challengeService.getChallengesForUser(new UserIdtoUser().apply(userId,
+                ContextLoader.getTenantDomainFromContext()), offset, limit))
+                .build();
     }
     @Override
-    public Response updateChallengeAnswerOfAUser(String challengeSetId,String userId,UserChallengeAnswerDTO challengeAnswer){
-        // do some magic!
-        return Response.ok().entity(challengeService.updateChallengeAnswerOfUser(userId, challengeSetId,
-                challengeAnswer)).build();
+    public Response updateChallengeAnswerOfAUser(String challengeSetId,String userId,UserChallengeAnswerDTO
+            challengeAnswer){
+
+        challengeService.updateChallengeAnswerOfUser(new UserIdtoUser().apply(userId,
+                ContextLoader.getTenantDomainFromContext()), challengeSetId, challengeAnswer);
+        return Response.ok().build();
     }
     @Override
     public Response updateChallengeAnswersOfAUser(String userId,List<ChallengeAnswerDTO> challengeAnswers){
-        // do some magic!
-        return Response.ok().entity(challengeService.updateChallengeAnswersOfUser(userId, challengeAnswers)).build();
+
+        challengeService.updateChallengeAnswersOfUser(new UserIdtoUser().apply(userId,
+                ContextLoader.getTenantDomainFromContext()), challengeAnswers);
+        return Response.ok().build();
     }
 
 }
