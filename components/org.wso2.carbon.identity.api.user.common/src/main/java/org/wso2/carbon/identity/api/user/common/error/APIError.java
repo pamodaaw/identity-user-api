@@ -17,35 +17,48 @@
 package org.wso2.carbon.identity.api.user.common.error;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 public class APIError extends WebApplicationException {
 
     private String message;
+    private String code;
+    private ErrorDTO responseEntity;
+    private Response.Status status;
 
     public APIError(Response.Status status , ErrorDTO errorResponse) {
-        super(Response.status(status)
-                .entity(errorResponse)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .build());
+//        this.responseEntity = Response.status(status)
+//                .entity(errorResponse)
+//                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+//                .build();
+        this.responseEntity = errorResponse;
         this.message = status.getReasonPhrase();
+        this.code = errorResponse.getCode();
+        this.status = status;
     }
 
     public APIError(Response.Status status, String message, ErrorDTO errorResponse) {
         this(status, errorResponse);
         this.message = message;
-    }
-
-    public APIError() {
-
-        super(Response.Status.FORBIDDEN);
+        this.code = errorResponse.getCode();
+        this.status = status;
     }
 
     @Override
     public String getMessage() {
 
         return message;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public ErrorDTO getResponseEntity() {
+        return responseEntity;
+    }
+
+    public Response.Status getStatus() {
+        return status;
     }
 }

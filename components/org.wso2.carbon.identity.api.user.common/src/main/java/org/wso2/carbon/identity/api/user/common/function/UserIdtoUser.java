@@ -19,18 +19,16 @@ package org.wso2.carbon.identity.api.user.common.function;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.identity.api.user.common.error.APIError;
+import org.wso2.carbon.identity.api.user.common.Constants;
 import org.wso2.carbon.identity.api.user.common.error.ErrorResponse;
+import org.wso2.carbon.identity.api.user.common.error.APIError;
 import org.wso2.carbon.identity.application.common.model.User;
 import org.wso2.carbon.user.core.UserStoreConfigConstants;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.util.Base64;
-import java.util.UUID;
 import java.util.function.Function;
-
-import static org.wso2.carbon.identity.api.user.common.Constants.ErrorMessages.ERROR_CODE_INVALID_USERNAME;
 
 public class UserIdtoUser implements Function<String[],User> {
 
@@ -72,7 +70,7 @@ public class UserIdtoUser implements Function<String[],User> {
             return user;
         } catch (Exception e){
             throw new APIError(Response.Status.BAD_REQUEST, new ErrorResponse.Builder().withError
-                    (ERROR_CODE_INVALID_USERNAME).build(log, e, "Invalid userId: " +
+                    (Constants.ErrorMessages.ERROR_CODE_INVALID_USERNAME).build(log, e, "Invalid userId: " +
                     userId));
         }
     }

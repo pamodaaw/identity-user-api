@@ -26,7 +26,6 @@ import org.wso2.carbon.identity.application.common.model.User;
 import org.wso2.carbon.identity.recovery.ChallengeQuestionManager;
 import org.wso2.carbon.identity.recovery.IdentityRecoveryClientException;
 import org.wso2.carbon.identity.recovery.IdentityRecoveryException;
-import org.wso2.carbon.identity.recovery.IdentityRecoveryServerException;
 import org.wso2.carbon.identity.recovery.model.ChallengeQuestion;
 import org.wso2.carbon.identity.recovery.model.UserChallengeAnswer;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.core.functions.ChallengeQuestionToExternal;
@@ -251,13 +250,13 @@ public class UserChallengeService {
             errorResponse.setCode(errorCode);
         }
 
-        Response.Status status = Response.Status.fromStatusCode(e.getHttpStatusCode());
+        Response.Status status;
 
         if (e instanceof IdentityRecoveryClientException) {
             errorResponse.setDescription(e.getMessage());
-            status = status != null ? status : Response.Status.BAD_REQUEST;
-        } else if (e instanceof IdentityRecoveryServerException) {
-            status = status != null ? status : Response.Status.INTERNAL_SERVER_ERROR;
+            status = Response.Status.BAD_REQUEST;
+        } else {
+            status = Response.Status.INTERNAL_SERVER_ERROR;
         }
         throw new APIError(status, errorResponse);
     }
