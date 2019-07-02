@@ -20,7 +20,7 @@ package org.wso2.carbon.identity.rest.api.user.challenge.v1.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.wso2.carbon.identity.api.user.common.ContextLoader;
-import org.wso2.carbon.identity.api.user.common.function.UserIdtoUser;
+import org.wso2.carbon.identity.api.user.common.function.UserIdToUser;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.UserIdApiService;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.core.UserChallengeService;
 import org.wso2.carbon.identity.rest.api.user.challenge.v1.dto.ChallengeAnswerDTO;
@@ -38,7 +38,7 @@ public class UserIdApiServiceImpl extends UserIdApiService {
     @Override
     public Response addChallengeAnswerOfAUser(String challengeSetId, String userId, UserChallengeAnswerDTO challengeAnswer) {
 
-        challengeService.addChallengeAnswerOfUser(new UserIdtoUser().apply(userId,
+        challengeService.addChallengeAnswerOfUser(new UserIdToUser().apply(userId,
                 ContextLoader.getTenantDomainFromContext()), challengeSetId, challengeAnswer);
         return Response.ok().build();
     }
@@ -46,34 +46,34 @@ public class UserIdApiServiceImpl extends UserIdApiService {
     @Override
     public Response addChallengeAnswersOfAUser(String userId,List<ChallengeAnswerDTO> challengeAnswer){
 
-        challengeService.setChallengeAnswersOfUser(new UserIdtoUser().apply(userId,
+        challengeService.setChallengeAnswersOfUser(new UserIdToUser().apply(userId,
                 ContextLoader.getTenantDomainFromContext()), challengeAnswer);
         return Response.ok().build();
     }
     @Override
     public Response deleteChallengeAnswerOfAUser(String challengeSetId,String userId){
 
-        challengeService.removeChallengeAnswerOfUser(new UserIdtoUser().apply(userId,
+        challengeService.removeChallengeAnswerOfUser(new UserIdToUser().apply(userId,
                 ContextLoader.getTenantDomainFromContext()), challengeSetId);
         return Response.ok().build();
     }
     @Override
     public Response deleteChallengeAnswersOfAUser(String userId){
 
-        challengeService.removeChallengeAnswersOfUser(new UserIdtoUser().apply(userId,
+        challengeService.removeChallengeAnswersOfUser(new UserIdToUser().apply(userId,
                 ContextLoader.getTenantDomainFromContext()));
         return Response.ok().build();
     }
     @Override
     public Response getAnsweredChallengesOfAUser(String userId){
 
-        return Response.ok().entity(challengeService.getChallengeAnswersOfUser(new UserIdtoUser().apply(userId,
+        return Response.ok().entity(challengeService.getChallengeAnswersOfUser(new UserIdToUser().apply(userId,
                 ContextLoader.getTenantDomainFromContext()))).build();
     }
     @Override
     public Response getChallengesForAUser(String userId,Integer offset,Integer limit){
 
-        return Response.ok().entity(challengeService.getChallengesForUser(new UserIdtoUser().apply(userId,
+        return Response.ok().entity(challengeService.getChallengesForUser(new UserIdToUser().apply(userId,
                 ContextLoader.getTenantDomainFromContext()), offset, limit))
                 .build();
     }
@@ -81,14 +81,14 @@ public class UserIdApiServiceImpl extends UserIdApiService {
     public Response updateChallengeAnswerOfAUser(String challengeSetId,String userId,UserChallengeAnswerDTO
             challengeAnswer){
 
-        challengeService.updateChallengeAnswerOfUser(new UserIdtoUser().apply(userId,
+        challengeService.updateChallengeAnswerOfUser(new UserIdToUser().apply(userId,
                 ContextLoader.getTenantDomainFromContext()), challengeSetId, challengeAnswer);
         return Response.ok().build();
     }
     @Override
     public Response updateChallengeAnswersOfAUser(String userId,List<ChallengeAnswerDTO> challengeAnswers){
 
-        challengeService.updateChallengeAnswersOfUser(new UserIdtoUser().apply(userId,
+        challengeService.updateChallengeAnswersOfUser(new UserIdToUser().apply(userId,
                 ContextLoader.getTenantDomainFromContext()), challengeAnswers);
         return Response.ok().build();
     }

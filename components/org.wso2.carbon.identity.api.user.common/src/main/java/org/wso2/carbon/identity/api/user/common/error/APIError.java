@@ -27,10 +27,6 @@ public class APIError extends WebApplicationException {
     private Response.Status status;
 
     public APIError(Response.Status status , ErrorDTO errorResponse) {
-//        this.responseEntity = Response.status(status)
-//                .entity(errorResponse)
-//                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-//                .build();
         this.responseEntity = errorResponse;
         this.message = status.getReasonPhrase();
         this.code = errorResponse.getCode();
